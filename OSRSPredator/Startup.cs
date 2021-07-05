@@ -8,6 +8,7 @@ using Microsoft.OpenApi.Models;
 using Persistence;
 using MediatR;
 using Application.ItemPriceSnapshots;
+using Application.Generators;
 
 namespace OSRSPredator
 {
@@ -34,6 +35,8 @@ namespace OSRSPredator
                 opt.UseSqlite(Configuration.GetConnectionString("DefaultConnection"));
             });
             services.AddMediatR(typeof(List.Handler).Assembly);
+
+            services.AddScoped<IGenerator, SimpleAnalysisGenerator>();
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
