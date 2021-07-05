@@ -26,7 +26,10 @@ namespace Application.Generators
             {
                 ItemPriceSnapshot aSnapshot = a.historical.FirstOrDefault();
                 ItemPriceSnapshot bSnapshot = b.historical.FirstOrDefault();
-                return (aSnapshot.high - aSnapshot.low).CompareTo(bSnapshot.high - bSnapshot.low);
+
+                float aDelta = aSnapshot.high - aSnapshot.low;
+                float bDelta = bSnapshot.high - bSnapshot.low;
+                return bDelta.CompareTo(aDelta);
             });
 
             DateTime foo = DateTime.Now;
