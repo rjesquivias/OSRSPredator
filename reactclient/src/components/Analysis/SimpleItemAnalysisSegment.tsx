@@ -18,7 +18,7 @@ export default function SimpleItemAnalysisSegment({name, delta, examine, high, h
                 <Grid.Column width='1'>
                 <Checkbox />
                 </Grid.Column>
-                <Grid.Column width='2'>
+                <Grid.Column width='1'>
                     <Image avatar src='https://oldschool.runescape.wiki/images/5/53/Elysian_spirit_shield.png?e6bb3' />
                 </Grid.Column>
                 <Grid.Column width='4'>

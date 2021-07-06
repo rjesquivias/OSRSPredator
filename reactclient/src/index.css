@@ -15,3 +15,11 @@ code {
 .ui.container {
   width: 95% !important;
 }
+
+.removePadding {
+  padding-bottom: 0 !important;
+}
+
+.hover-button:hover {
+  cursor: pointer;
+}

@@ -1,7 +1,6 @@
-import React, { useEffect, useState } from 'react'
-import { Grid, List } from 'semantic-ui-react';
-import axios, { AxiosResponse } from 'axios';
-import { Card, Icon, Image } from 'semantic-ui-react'
+import { useEffect, useState } from 'react'
+import { List } from 'semantic-ui-react';
+import axios from 'axios';
 import SimpleItemAnalysisSegment from './SimpleItemAnalysisSegment';
 
 export default function SimpleItemAnalysisList() {
