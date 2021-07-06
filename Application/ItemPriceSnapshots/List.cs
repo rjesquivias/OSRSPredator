@@ -25,8 +25,7 @@ namespace Application.ItemPriceSnapshots
 
             public async Task<List<ItemPriceSnapshot>> Handle(Query request, CancellationToken cancellationToken)
             {
-                ItemPriceSnapshotComparer comparer = new ItemPriceSnapshotComparer();
-                return context.ItemPriceSnapshots.OrderBy(snapshot => snapshot, comparer).ToList();
+                return context.ItemPriceSnapshots.AsEnumerable().OrderBy(snapshot => snapshot, new ItemPriceSnapshotComparer()).ToList();
             }
         }
 
