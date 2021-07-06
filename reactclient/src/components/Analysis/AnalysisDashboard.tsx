@@ -29,7 +29,6 @@ export default function AnalysisDashboard() {
                 {simpleItemAnalysisList.map((simpleItemAnalysis: any) => (
                     <List.Item key={simpleItemAnalysis.id}>
                         <Card>
-                            
                             <Image src={"https://oldschool.runescape.wiki/images/5/53/Elysian_spirit_shield.png?e6bb3"} wrapped ui={false} />
                             <Card.Content>
                                 <Card.Header>{simpleItemAnalysis.itemDetails.name}</Card.Header>
