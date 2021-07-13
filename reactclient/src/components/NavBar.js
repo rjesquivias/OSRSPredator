@@ -13,7 +13,7 @@ const NavBar = () => {
             </div>
             <div className="right menu">
                 <a className={activeItem === "Option1" ? "item active" : "item"} onClick={(e) => handleItemClick(e, "Option1")}>
-                    Dashboard
+                    All Items
                 </a>
                 <a className={activeItem === "Option2" ? "item active" : "item"} active={'false'} onClick={(e) => handleItemClick(e, "Option2")}>
                     Messages

@@ -38,6 +38,22 @@ namespace Application.Generators
             return await fromItemHistoricals(mostRecentSnapshotsForAllItems.Where(snapshot => unixTime - snapshot.historical.FirstOrDefault().highTime < secondsInDay && unixTime - snapshot.historical.FirstOrDefault().lowTime < secondsInDay).Take(100));
         }
 
+        public async Task<List<SimpleItemAnalysis>> Generate(int pageSize, int page)
+        {
+            List<ItemHistorical> mostRecentSnapshotsForAllItems = getMostRecentSnapshotsForAllItems();
+            mostRecentSnapshotsForAllItems.Sort((a, b) =>
+            {
+                ItemPriceSnapshot aSnapshot = a.historical.FirstOrDefault();
+                ItemPriceSnapshot bSnapshot = b.historical.FirstOrDefault();
+
+                float aDelta = aSnapshot.high - aSnapshot.low;
+                float bDelta = bSnapshot.high - bSnapshot.low;
+                return bDelta.CompareTo(aDelta);
+            });
+
+            return await fromItemHistoricals(mostRecentSnapshotsForAllItems.GetRange((page - 1) * pageSize, pageSize));
+        }
+
         public List<ItemHistorical> getMostRecentSnapshotsForAllItems()
         {
             List<ItemHistorical> itemHistorical = context.ItemHistoricals.Select(item => new ItemHistorical

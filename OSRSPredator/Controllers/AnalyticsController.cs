@@ -17,7 +17,7 @@ namespace API.Controllers
         protected IMediator Mediator => mediator ??= HttpContext.RequestServices.GetService<IMediator>();
 
         [HttpGet]
-        public async Task<ActionResult<List<SimpleItemAnalysis>>> GetItemDetails() => await Mediator.Send(new Application.Analytics.List.Query());
+        public async Task<ActionResult<List<SimpleItemAnalysis>>> GetItemDetails(int pageSize = 100, int page = 1) => await Mediator.Send(new Application.Analytics.List.Query{ pageSize = pageSize, page = page });
 
         [HttpGet("{id}")]
         public async Task<ActionResult<ItemAnalysis>> GetItemDetail(long id) => await Mediator.Send(new Application.Analytics.Details.Query { Id = id });

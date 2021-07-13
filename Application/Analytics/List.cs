@@ -11,7 +11,8 @@ namespace Application.Analytics
     {
         public class Query : IRequest<List<SimpleItemAnalysis>>
         {
-            public long Id { get; set; }
+            public int pageSize {get; set; }
+            public int page { get; set; }
         }
 
         public class Handler : IRequestHandler<Query, List<SimpleItemAnalysis>>
@@ -24,7 +25,7 @@ namespace Application.Analytics
             }
             public async Task<List<SimpleItemAnalysis>> Handle(Query request, CancellationToken cancellationToken)
             {
-                return await generator.Generate();
+                return await generator.Generate(request.pageSize, request.page);
             }
         }
     }
