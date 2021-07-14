@@ -21,6 +21,8 @@ namespace OSRSPredator
 
         public IConfiguration Configuration { get; }
 
+        public delegate IServiceCollection ServiceResolver(string key);
+
         // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services)
         {
@@ -36,7 +38,8 @@ namespace OSRSPredator
             });
             services.AddMediatR(typeof(List.Handler).Assembly);
 
-            services.AddScoped<IGenerator, SimpleAnalysisGenerator>();
+            services.AddScoped<ISimpleAnalysisGenerator, SimpleAnalysisGenerator>();
+            services.AddScoped<IWatchListGenerator, WatchListGenerator>();
 
             services.AddCors(opt => {
                 opt.AddPolicy("CorsPolicy", policy => {

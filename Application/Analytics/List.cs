@@ -17,9 +17,9 @@ namespace Application.Analytics
 
         public class Handler : IRequestHandler<Query, List<SimpleItemAnalysis>>
         {
-            private readonly IGenerator generator;
+            private readonly ISimpleAnalysisGenerator generator;
 
-            public Handler(IGenerator generator)
+            public Handler(ISimpleAnalysisGenerator generator)
             {
                 this.generator = generator;
             }

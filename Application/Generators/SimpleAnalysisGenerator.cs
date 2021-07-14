@@ -1,4 +1,5 @@
-﻿using Domain;
+﻿using Application.Mapping;
+using Domain;
 using MediatR;
 using Persistence;
 using System;
@@ -8,9 +9,14 @@ using System.Threading.Tasks;
 
 namespace Application.Generators
 {
-    public class SimpleAnalysisGenerator : IGenerator
+    public interface ISimpleAnalysisGenerator : IGenerator
+    {    
+    }
+
+    public class SimpleAnalysisGenerator : ISimpleAnalysisGenerator
     {
         private readonly DataContext context;
+
         private readonly IMediator mediator;
 
         public SimpleAnalysisGenerator(DataContext context, IMediator mediator)
@@ -19,24 +25,6 @@ namespace Application.Generators
             this.mediator = mediator;
         }
 
-        public async Task<List<SimpleItemAnalysis>> Generate()
-        {
-            List<ItemHistorical> mostRecentSnapshotsForAllItems = getMostRecentSnapshotsForAllItems();
-            mostRecentSnapshotsForAllItems.Sort((a, b) =>
-            {
-                ItemPriceSnapshot aSnapshot = a.historical.FirstOrDefault();
-                ItemPriceSnapshot bSnapshot = b.historical.FirstOrDefault();
-
-                float aDelta = aSnapshot.high - aSnapshot.low;
-                float bDelta = bSnapshot.high - bSnapshot.low;
-                return bDelta.CompareTo(aDelta);
-            });
-
-            DateTime foo = DateTime.Now;
-            long unixTime = ((DateTimeOffset)foo).ToUnixTimeSeconds();
-            long secondsInDay = 86400;
-            return await fromItemHistoricals(mostRecentSnapshotsForAllItems.Where(snapshot => unixTime - snapshot.historical.FirstOrDefault().highTime < secondsInDay && unixTime - snapshot.historical.FirstOrDefault().lowTime < secondsInDay).Take(100));
-        }
 
         public async Task<List<SimpleItemAnalysis>> Generate(int pageSize, int page)
         {
@@ -51,7 +39,8 @@ namespace Application.Generators
                 return bDelta.CompareTo(aDelta);
             });
 
-            return await fromItemHistoricals(mostRecentSnapshotsForAllItems.GetRange((page - 1) * pageSize, pageSize));
+            SimpleItemAnalysisMap map = new SimpleItemAnalysisMap(this.mediator);
+            return await map.fromItemHistoricals(mostRecentSnapshotsForAllItems.GetRange((page - 1) * pageSize, pageSize));
         }
 
         public List<ItemHistorical> getMostRecentSnapshotsForAllItems()
@@ -66,26 +55,6 @@ namespace Application.Generators
             .ToList();
 
             return itemHistorical;
-        }
-
-        public async Task<List<SimpleItemAnalysis>> fromItemHistoricals(IEnumerable<ItemHistorical> itemHistoricals)
-        {
-            List<SimpleItemAnalysis> simpleItemAnalysisList = new List<SimpleItemAnalysis>();
-
-            foreach (ItemHistorical item in itemHistoricals)
-            {
-                ItemDetail itemDetail = await mediator.Send(new Application.ItemDetails.Details.Query { Id = item.Id });
-
-                simpleItemAnalysisList.Add(new SimpleItemAnalysis
-                {
-                    delta = item.historical.FirstOrDefault().high - item.historical.FirstOrDefault().low,
-                    mostRecentSnapshot = item.historical.FirstOrDefault(),
-                    itemDetails = itemDetail,
-                    prediction = 999
-                });
-            }
-
-            return simpleItemAnalysisList;
         }
     }
 }

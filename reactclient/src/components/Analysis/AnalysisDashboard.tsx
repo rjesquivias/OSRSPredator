@@ -1,21 +1,17 @@
 import axios from "axios";
-import { useEffect, useState } from "react";
 import { Grid, Container, Segment } from "semantic-ui-react"
 import PaginationCompact from "../Pagination";
 import AnalysisFilters from "./AnalysisFilters"
 import SimpleItemAnalysisList from "./SimpleItemAnalysisList"
 import SimpleItemAnalysisListHeader from "./SimpleItemAnalysisListHeader"
 
-export default function AnalysisDashboard() {
-    const [simpleItemAnalysisList, setSimpleItemAnalysisList] = useState([]);
-    const [pageSize, setPageSize] = useState(20);
-    useEffect(() => {
-        axios.get(`https://localhost:5001/api/v1/Analytics?pageSize=${pageSize}&page=1`).then(response => {
-            console.log(response);
-            setSimpleItemAnalysisList(response.data);
-        });
-    }, []);
+interface Props {
+    simpleItemAnalysisList: any[]
+    pageSize: number
+    setSimpleItemAnalysisList: (itemList: any[]) => void
+}
 
+export default function AnalysisDashboard({simpleItemAnalysisList, pageSize, setSimpleItemAnalysisList} : Props) {
     return (
         <Container>
             <Grid>
