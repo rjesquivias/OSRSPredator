@@ -1,6 +1,7 @@
 import { Segment, Image, Checkbox, Grid, Container, Header } from "semantic-ui-react"
 
 interface Props {
+    id: string,
     name: string,
     delta: number,
     examine: string,
@@ -11,7 +12,7 @@ interface Props {
     prediction: number
 }
 
-export default function SimpleItemAnalysisSegment({name, delta, examine, high, highTime, low, lowTime, prediction}: Props) {
+export default function SimpleItemAnalysisSegment({id, name, delta, examine, high, highTime, low, lowTime, prediction}: Props) {
     return (
         <Segment>
             <Grid>
@@ -19,7 +20,7 @@ export default function SimpleItemAnalysisSegment({name, delta, examine, high, h
                 <Checkbox />
                 </Grid.Column>
                 <Grid.Column width='1'>
-                    <Image avatar src='https://oldschool.runescape.wiki/images/5/53/Elysian_spirit_shield.png?e6bb3' />
+                    <Image avatar src={`https://services.runescape.com/m=itemdb_oldschool/obj_big.gif?id=${id}`} />
                 </Grid.Column>
                 <Grid.Column width='4'>
                     <Container>

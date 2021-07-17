@@ -11,6 +11,7 @@ export default function SimpleItemAnalysisList({simpleItemAnalysisList}: Props) 
             {simpleItemAnalysisList.map((simpleItemAnalysis: any) => (
                 <List.Item key={simpleItemAnalysis.id}>
                     <SimpleItemAnalysisSegment 
+                        id={simpleItemAnalysis.itemDetails.id}
                         name={simpleItemAnalysis.itemDetails ? simpleItemAnalysis.itemDetails.name: 'null itemDetails'} 
                         delta={simpleItemAnalysis.delta} 
                         examine={simpleItemAnalysis.itemDetails ? simpleItemAnalysis.itemDetails.examine: 'null itemDetails'} 
