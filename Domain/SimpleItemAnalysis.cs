@@ -8,6 +8,8 @@ namespace Domain
 {
     public class SimpleItemAnalysis
     {
+        public long Id { get; set; }
+        
         public long delta { get; set; }
 
         public ItemPriceSnapshot mostRecentSnapshot { get; set; }

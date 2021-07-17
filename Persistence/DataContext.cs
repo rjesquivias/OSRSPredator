@@ -15,6 +15,6 @@ namespace Persistence
 
         public DbSet<ItemPriceSnapshot> ItemPriceSnapshots { get; set; }
 
-        public DbSet<ItemAnalysis> WatchList { get; set; }
+        public DbSet<SimpleItemAnalysis> WatchList { get; set; }
     }
 }

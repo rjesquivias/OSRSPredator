@@ -20,7 +20,7 @@ namespace API.Controllers
         public async Task<ActionResult<List<SimpleItemAnalysis>>> GetItemDetails(int pageSize = 100, int page = 1) => await Mediator.Send(new Application.Analytics.List.Query{ pageSize = pageSize, page = page });
 
         [HttpGet("[action]")]
-        public async Task<ActionResult<List<SimpleItemAnalysis>>> Watchlist(int pageSize = 100, int page = 1) => await Mediator.Send(new Application.Analytics.WatchList.Query{ pageSize = pageSize, page = page });
+        public async Task<ActionResult<List<SimpleItemAnalysis>>> Watchlist(int pageSize = 100, int page = 1) => await Mediator.Send(new Application.SimpleItemAnalysis.List.Query{ pageSize = pageSize, page = page });
 
         [HttpGet("{id}")]
         public async Task<ActionResult<ItemAnalysis>> GetItemDetail(long id) => await Mediator.Send(new Application.Analytics.Details.Query { Id = id });

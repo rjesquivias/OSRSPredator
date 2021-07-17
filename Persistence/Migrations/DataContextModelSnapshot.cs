@@ -16,33 +16,6 @@ namespace Persistence.Migrations
             modelBuilder
                 .HasAnnotation("ProductVersion", "5.0.7");
 
-            modelBuilder.Entity("Domain.ItemAnalysis", b =>
-                {
-                    b.Property<long>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("INTEGER");
-
-                    b.Property<long>("delta")
-                        .HasColumnType("INTEGER");
-
-                    b.Property<long?>("itemDetailsId")
-                        .HasColumnType("INTEGER");
-
-                    b.Property<Guid?>("mostRecentSnapshotId")
-                        .HasColumnType("TEXT");
-
-                    b.Property<long>("prediction")
-                        .HasColumnType("INTEGER");
-
-                    b.HasKey("Id");
-
-                    b.HasIndex("itemDetailsId");
-
-                    b.HasIndex("mostRecentSnapshotId");
-
-                    b.ToTable("WatchList");
-                });
-
             modelBuilder.Entity("Domain.ItemDetail", b =>
                 {
                     b.Property<long>("Id")
@@ -101,9 +74,6 @@ namespace Persistence.Migrations
                         .HasMaxLength(70)
                         .HasColumnType("TEXT");
 
-                    b.Property<long?>("ItemAnalysisId")
-                        .HasColumnType("INTEGER");
-
                     b.Property<long?>("ItemHistoricalId")
                         .HasColumnType("INTEGER");
 
@@ -121,14 +91,46 @@ namespace Persistence.Migrations
 
                     b.HasKey("Id");
 
-                    b.HasIndex("ItemAnalysisId");
-
                     b.HasIndex("ItemHistoricalId");
 
                     b.ToTable("ItemPriceSnapshots");
                 });
 
-            modelBuilder.Entity("Domain.ItemAnalysis", b =>
+            modelBuilder.Entity("Domain.SimpleItemAnalysis", b =>
+                {
+                    b.Property<long>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("INTEGER");
+
+                    b.Property<long>("delta")
+                        .HasColumnType("INTEGER");
+
+                    b.Property<long?>("itemDetailsId")
+                        .HasColumnType("INTEGER");
+
+                    b.Property<Guid?>("mostRecentSnapshotId")
+                        .HasColumnType("TEXT");
+
+                    b.Property<long>("prediction")
+                        .HasColumnType("INTEGER");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("itemDetailsId");
+
+                    b.HasIndex("mostRecentSnapshotId");
+
+                    b.ToTable("WatchList");
+                });
+
+            modelBuilder.Entity("Domain.ItemPriceSnapshot", b =>
+                {
+                    b.HasOne("Domain.ItemHistorical", null)
+                        .WithMany("historical")
+                        .HasForeignKey("ItemHistoricalId");
+                });
+
+            modelBuilder.Entity("Domain.SimpleItemAnalysis", b =>
                 {
                     b.HasOne("Domain.ItemDetail", "itemDetails")
                         .WithMany()
@@ -141,22 +143,6 @@ namespace Persistence.Migrations
                     b.Navigation("itemDetails");
 
                     b.Navigation("mostRecentSnapshot");
-                });
-
-            modelBuilder.Entity("Domain.ItemPriceSnapshot", b =>
-                {
-                    b.HasOne("Domain.ItemAnalysis", null)
-                        .WithMany("snapshotGraph")
-                        .HasForeignKey("ItemAnalysisId");
-
-                    b.HasOne("Domain.ItemHistorical", null)
-                        .WithMany("historical")
-                        .HasForeignKey("ItemHistoricalId");
-                });
-
-            modelBuilder.Entity("Domain.ItemAnalysis", b =>
-                {
-                    b.Navigation("snapshotGraph");
                 });
 
             modelBuilder.Entity("Domain.ItemHistorical", b =>

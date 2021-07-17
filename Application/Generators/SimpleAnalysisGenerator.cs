@@ -26,7 +26,7 @@ namespace Application.Generators
         }
 
 
-        public async Task<List<SimpleItemAnalysis>> Generate(int pageSize, int page)
+        public async Task<List<Domain.SimpleItemAnalysis>> Generate(int pageSize, int page)
         {
             List<ItemHistorical> mostRecentSnapshotsForAllItems = getMostRecentSnapshotsForAllItems();
             mostRecentSnapshotsForAllItems.Sort((a, b) =>

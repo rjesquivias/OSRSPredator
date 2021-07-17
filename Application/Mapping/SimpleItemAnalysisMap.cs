@@ -15,15 +15,15 @@ namespace Application.Mapping
             this.mediator = mediator;
         }
 
-        public async Task<List<SimpleItemAnalysis>> fromItemHistoricals(IEnumerable<ItemHistorical> itemHistoricals)
+        public async Task<List<Domain.SimpleItemAnalysis>> fromItemHistoricals(IEnumerable<ItemHistorical> itemHistoricals)
         {
-            List<SimpleItemAnalysis> simpleItemAnalysisList = new List<SimpleItemAnalysis>();
+            List<Domain.SimpleItemAnalysis> simpleItemAnalysisList = new List<Domain.SimpleItemAnalysis>();
 
             foreach (ItemHistorical item in itemHistoricals)
             {
                 ItemDetail itemDetail = await mediator.Send(new Application.ItemDetails.Details.Query { Id = item.Id });
 
-                simpleItemAnalysisList.Add(new SimpleItemAnalysis
+                simpleItemAnalysisList.Add(new Domain.SimpleItemAnalysis
                 {
                     delta = item.historical.FirstOrDefault().high - item.historical.FirstOrDefault().low,
                     mostRecentSnapshot = item.historical.FirstOrDefault(),

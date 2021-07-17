@@ -6,6 +6,6 @@ namespace Application.Generators
 {
     public interface IGenerator
     {
-        Task<List<SimpleItemAnalysis>> Generate(int pageSize, int page);
+        Task<List<Domain.SimpleItemAnalysis>> Generate(int pageSize, int page);
     }
 }
