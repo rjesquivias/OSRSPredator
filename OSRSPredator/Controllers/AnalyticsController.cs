@@ -24,5 +24,8 @@ namespace API.Controllers
 
         [HttpGet("{id}")]
         public async Task<ActionResult<ItemAnalysis>> GetItemDetail(long id) => await Mediator.Send(new Application.Analytics.Details.Query { Id = id });
+
+        [HttpPost("[action]")]
+        public async Task<ActionResult> Watchlist([FromBody()] SimpleItemAnalysis simpleItemAnalysis) => Ok(await Mediator.Send(new Application.SimpleItemAnalysis.Post.Command{ simpleItemAnalysis = simpleItemAnalysis }));
     }
 }
