@@ -3,9 +3,11 @@ import SimpleItemAnalysisSegment from './SimpleItemAnalysisSegment';
 
 interface Props {
     simpleItemAnalysisList: any[]
+    setCheckedItems: (checkedItems: any[]) => void
+    checkedItems: any[]
 }
 
-export default function SimpleItemAnalysisList({simpleItemAnalysisList}: Props) {
+export default function SimpleItemAnalysisList({simpleItemAnalysisList, setCheckedItems, checkedItems}: Props) {
     
     return (
         <List>
@@ -21,6 +23,8 @@ export default function SimpleItemAnalysisList({simpleItemAnalysisList}: Props) 
                         low={simpleItemAnalysis.mostRecentSnapshot ? simpleItemAnalysis.mostRecentSnapshot.low : 0} 
                         lowTime={simpleItemAnalysis.mostRecentSnapshot ? simpleItemAnalysis.mostRecentSnapshot.lowTime : 0} 
                         prediction={simpleItemAnalysis.prediction}
+                        setCheckedItems={setCheckedItems}
+                        checkedItems={checkedItems}
                     />
                 </List.Item>
             ))}

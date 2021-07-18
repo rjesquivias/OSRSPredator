@@ -29,8 +29,11 @@ namespace Application.SimpleItemAnalysis
 
             public async Task<Unit> Handle(Command request, CancellationToken cancellationToken)
             {
+                if(context.WatchList.Any(item => item.detailsId == request.simpleItemAnalysis.itemDetails.Id)) return Unit.Value;
+
                 Domain.SimpleItemAnalysis simpleItemAnalysis = request.simpleItemAnalysis;
                 simpleItemAnalysis.Id = Application.Util.Random.RandomNumber(int.MinValue, int.MaxValue);
+
 
                 simpleItemAnalysis.detailsId = simpleItemAnalysis.itemDetails.Id;
                 simpleItemAnalysis.snapshotId = simpleItemAnalysis.mostRecentSnapshot.Id;
