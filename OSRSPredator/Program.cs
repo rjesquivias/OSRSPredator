@@ -23,7 +23,7 @@ namespace OSRSPredator
             using var scope = host.Services.CreateScope();
 
             var services = scope.ServiceProvider;
-
+/*
             try
             {
                 var context = services.GetRequiredService<DataContext>();
@@ -35,6 +35,7 @@ namespace OSRSPredator
                 var logger = services.GetRequiredService<ILogger<Program>>();
                 logger.LogError(ex, "An error occured during migration");
             }
+*/
 
             await host.RunAsync();
         }

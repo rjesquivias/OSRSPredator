@@ -69,8 +69,7 @@ namespace Persistence.Migrations
 
             modelBuilder.Entity("Domain.ItemPriceSnapshot", b =>
                 {
-                    b.Property<Guid>("Id")
-                        .ValueGeneratedOnAdd()
+                    b.Property<string>("Id")
                         .HasMaxLength(70)
                         .HasColumnType("TEXT");
 
@@ -105,20 +104,21 @@ namespace Persistence.Migrations
                     b.Property<long>("delta")
                         .HasColumnType("INTEGER");
 
-                    b.Property<long?>("itemDetailsId")
+                    b.Property<long>("detailsId")
                         .HasColumnType("INTEGER");
-
-                    b.Property<Guid?>("mostRecentSnapshotId")
-                        .HasColumnType("TEXT");
 
                     b.Property<long>("prediction")
                         .HasColumnType("INTEGER");
 
+                    b.Property<string>("snapshotId")
+                        .IsRequired()
+                        .HasColumnType("TEXT");
+
                     b.HasKey("Id");
 
-                    b.HasIndex("itemDetailsId");
+                    b.HasIndex("detailsId");
 
-                    b.HasIndex("mostRecentSnapshotId");
+                    b.HasIndex("snapshotId");
 
                     b.ToTable("WatchList");
                 });
@@ -134,11 +134,15 @@ namespace Persistence.Migrations
                 {
                     b.HasOne("Domain.ItemDetail", "itemDetails")
                         .WithMany()
-                        .HasForeignKey("itemDetailsId");
+                        .HasForeignKey("detailsId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
 
                     b.HasOne("Domain.ItemPriceSnapshot", "mostRecentSnapshot")
                         .WithMany()
-                        .HasForeignKey("mostRecentSnapshotId");
+                        .HasForeignKey("snapshotId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
 
                     b.Navigation("itemDetails");
 

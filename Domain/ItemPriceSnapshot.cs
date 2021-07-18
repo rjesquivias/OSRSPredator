@@ -10,7 +10,7 @@ namespace Domain
     public class ItemPriceSnapshot
     {
         [MaxLength(70)]
-        public Guid Id { get; set; }
+        public String Id { get; set; }
 
         public long high { get; set; }
 

@@ -21,7 +21,7 @@ namespace API.Controllers
         public async Task<ActionResult<List<ItemPriceSnapshot>>> GetItemPriceSnapshots() => await Mediator.Send(new Application.ItemPriceSnapshots.List.Query());
 
         [HttpGet("{id}")]
-        public async Task<ActionResult<ItemPriceSnapshot>> GetItemPriceSnapshot(Guid id) => await Mediator.Send(new Application.ItemPriceSnapshots.Details.Query { Id = id });
+        public async Task<ActionResult<ItemPriceSnapshot>> GetItemPriceSnapshot(String id) => await Mediator.Send(new Application.ItemPriceSnapshots.Details.Query { Id = id });
 
         [HttpPost]
         public async Task<ActionResult> SyncItemPriceSnapshots() => Ok(await Mediator.Send(new Application.ItemPriceSnapshots.Sync.Command()));

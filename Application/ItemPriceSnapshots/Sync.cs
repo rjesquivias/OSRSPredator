@@ -49,7 +49,7 @@ namespace Application.ItemPriceSnapshots
 
                             ItemPriceSnapshot newItemPriceSnapshot = new ItemPriceSnapshot
                             {
-                                Id = Guid.NewGuid(),
+                                Id = Guid.NewGuid().ToString(),
                                 high = entry.Value.high ?? 0,
                                 highTime = entry.Value.highTime ?? 0,
                                 low = entry.Value.low ?? 0,

@@ -14,7 +14,7 @@ namespace Application.ItemPriceSnapshots
     {
         public class Query : IRequest<ItemPriceSnapshot>
         {
-            public Guid Id { get; set; }
+            public String Id { get; set; }
         }
 
         public class Handler : IRequestHandler<Query, ItemPriceSnapshot>
