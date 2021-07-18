@@ -1,5 +1,6 @@
 import axios from "axios";
-import { Grid, Container, Segment } from "semantic-ui-react"
+import { useState } from "react";
+import { Grid, Container, Segment, Button } from "semantic-ui-react"
 import PaginationCompact from "../Pagination";
 import AnalysisFilters from "./AnalysisFilters"
 import SimpleItemAnalysisList from "./SimpleItemAnalysisList"
@@ -11,9 +12,30 @@ interface Props {
     setSimpleItemAnalysisList: (itemList: any[]) => void
 }
 
+const watchItems = async (checkedItems: number[]) => {
+    console.log(checkedItems)
+    // convert list of names into the proper post format
+    for (const id of checkedItems)
+    {
+        axios.get(`https://localhost:5001/api/v1/Analytics/${id}`).then((response) => {
+            console.log(response.data);
+            axios.post(`https://localhost:5001/api/v1/Analytics/Watchlist`, response.data);
+        })
+    }
+}
+
 export default function AnalysisDashboard({simpleItemAnalysisList, pageSize, setSimpleItemAnalysisList} : Props) {
+    const [checkedItems, setCheckedItems] = useState<any>([]);
+
     return (
         <Container>
+            <Grid>
+                <Grid.Column width='6' floated='right'>
+                </Grid.Column>
+                <Grid.Column width='10' floated='right'>
+                    <Button onClick={(e, data) => watchItems(checkedItems)}>Watch Items</Button>
+                </Grid.Column>
+            </Grid>
             <Grid>
                 <Grid.Column width='6' floated='right'>
                 </Grid.Column>
@@ -27,7 +49,7 @@ export default function AnalysisDashboard({simpleItemAnalysisList, pageSize, set
                     <AnalysisFilters />
                 </Grid.Column>
                 <Grid.Column width='10' floated='right'>
-                    <SimpleItemAnalysisList simpleItemAnalysisList={simpleItemAnalysisList}/>
+                    <SimpleItemAnalysisList simpleItemAnalysisList={simpleItemAnalysisList} setCheckedItems={setCheckedItems} checkedItems={checkedItems}/>
                 </Grid.Column>
             </Grid>
 

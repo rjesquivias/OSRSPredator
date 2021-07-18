@@ -9,15 +9,27 @@ interface Props {
     highTime: number,
     low: number,
     lowTime: number,
-    prediction: number
+    prediction: number,
+    setCheckedItems: (checkedItems: any[]) => void
+    checkedItems: any[]
 }
 
-export default function SimpleItemAnalysisSegment({id, name, delta, examine, high, highTime, low, lowTime, prediction}: Props) {
+const changeHandler = (e: any, data: any, id: any, setCheckedItems: (checkedItems: any[]) => void, checkedItems: any[]) => {
+    if(data.checked) {
+        setCheckedItems([...checkedItems, id])
+    } else {
+        setCheckedItems(checkedItems.filter(item => item !== id));
+    }
+}
+
+export default function SimpleItemAnalysisSegment({id, name, delta, examine, high, highTime, low, lowTime, prediction, setCheckedItems, checkedItems}: Props) {
+
+
     return (
         <Segment>
             <Grid>
                 <Grid.Column width='1'>
-                <Checkbox />
+                <Checkbox onChange={(e, data) => changeHandler(e, data, id, setCheckedItems, checkedItems)} />
                 </Grid.Column>
                 <Grid.Column width='1'>
                     <Image avatar src={`https://services.runescape.com/m=itemdb_oldschool/obj_big.gif?id=${id}`} />
