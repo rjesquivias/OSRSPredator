@@ -27,5 +27,8 @@ namespace API.Controllers
 
         [HttpPost("[action]")]
         public async Task<ActionResult> Watchlist([FromBody()] SimpleItemAnalysis simpleItemAnalysis) => Ok(await Mediator.Send(new Application.SimpleItemAnalysis.Post.Command{ simpleItemAnalysis = simpleItemAnalysis }));
+
+        [HttpPost("[action]")]
+        public async Task<ActionResult> Unwatchlist([FromBody()] SimpleItemAnalysis simpleItemAnalysis) => Ok(await Mediator.Send(new Application.SimpleItemAnalysis.Delete.Command{ simpleItemAnalysis = simpleItemAnalysis }));
     }
 }

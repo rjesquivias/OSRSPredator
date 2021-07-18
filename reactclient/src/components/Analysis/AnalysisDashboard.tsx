@@ -10,6 +10,7 @@ interface Props {
     simpleItemAnalysisList: any[]
     pageSize: number
     setSimpleItemAnalysisList: (itemList: any[]) => void
+    navState: string
 }
 
 const watchItems = async (checkedItems: number[]) => {
@@ -24,7 +25,19 @@ const watchItems = async (checkedItems: number[]) => {
     }
 }
 
-export default function AnalysisDashboard({simpleItemAnalysisList, pageSize, setSimpleItemAnalysisList} : Props) {
+const unwatchItems = async (checkedItems: number[]) => {
+    console.log(checkedItems)
+    // convert list of names into the proper post format
+    for (const id of checkedItems)
+    {
+        axios.get(`https://localhost:5001/api/v1/Analytics/${id}`).then((response) => {
+            console.log(response.data);
+            axios.post(`https://localhost:5001/api/v1/Analytics/Unwatchlist`, response.data);
+        })
+    }
+}
+
+export default function AnalysisDashboard({simpleItemAnalysisList, pageSize, setSimpleItemAnalysisList, navState} : Props) {
     const [checkedItems, setCheckedItems] = useState<any>([]);
 
     return (
@@ -33,7 +46,7 @@ export default function AnalysisDashboard({simpleItemAnalysisList, pageSize, set
                 <Grid.Column width='6' floated='right'>
                 </Grid.Column>
                 <Grid.Column width='10' floated='right'>
-                    <Button onClick={(e, data) => watchItems(checkedItems)}>Watch Items</Button>
+                    <Button onClick={(e, data) => { navState === "All Items" ? watchItems(checkedItems) : unwatchItems(checkedItems)}} content={navState === "All Items" ? "Watch Items" : "Unwatch Items"} />
                 </Grid.Column>
             </Grid>
             <Grid>

@@ -4,10 +4,11 @@ import { Menu } from "semantic-ui-react";
 
 interface Props {
     setSimpleItemAnalysisList: (itemList: any[]) => void
+    setNavState: (state: string) => void
+    navState: string
 }
 
-const NavBar = ({setSimpleItemAnalysisList} : Props) => {
-    const [activeItem, setActiveItem] = useState("All Items");
+const NavBar = ({setSimpleItemAnalysisList, setNavState, navState} : Props) => {
     const [watchlistResponse, setWatchlistResponse] = useState<any>(null);
 
     const updateItem = async(item: any) => {
@@ -23,8 +24,7 @@ const NavBar = ({setSimpleItemAnalysisList} : Props) => {
     }
 
     const handleItemClick = async (e: any, { name }: any) => {
-        console.log(name);
-        setActiveItem(name);
+        setNavState(name);
         if(name === 'All Items')
         {
             axios.get(`https://localhost:5001/api/v1/Analytics?pageSize=100&page=1`).then(response => {
@@ -58,12 +58,12 @@ const NavBar = ({setSimpleItemAnalysisList} : Props) => {
             <Menu pointing secondary className="right menu">
                 <Menu.Item
                     name='All Items'
-                    active={activeItem === 'All Items'}
+                    active={navState === 'All Items'}
                     onClick={handleItemClick}
                 />
                 <Menu.Item
                     name='Watchlist'
-                    active={activeItem === 'Watchlist'}
+                    active={navState === 'Watchlist'}
                     onClick={handleItemClick}
                 />
             </Menu>
