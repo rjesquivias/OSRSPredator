@@ -7,7 +7,7 @@ function App() {
   const [simpleItemAnalysisList, setSimpleItemAnalysisList] = useState([]);
   const [pageSize, setPageSize] = useState(20);
   const [navState, setNavState] = useState("All Items");
-
+  const [checkedItems, setCheckedItems] = useState([]);
 
   useEffect(() => {
       axios.get(`https://localhost:5001/api/v1/Analytics?pageSize=${pageSize}&page=1`).then(response => {
@@ -18,8 +18,8 @@ function App() {
 
   return (
     <div className="container">
-      <NavBar setSimpleItemAnalysisList={setSimpleItemAnalysisList} setNavState={setNavState} navState={navState} />
-      <AnalysisDashboard simpleItemAnalysisList={simpleItemAnalysisList} pageSize={pageSize} setSimpleItemAnalysisList={setSimpleItemAnalysisList} navState={navState} />
+      <NavBar setSimpleItemAnalysisList={setSimpleItemAnalysisList} setNavState={setNavState} navState={navState} setCheckedItems={setCheckedItems} />
+      <AnalysisDashboard simpleItemAnalysisList={simpleItemAnalysisList} pageSize={pageSize} setSimpleItemAnalysisList={setSimpleItemAnalysisList} navState={navState} setCheckedItems={setCheckedItems} checkedItems={checkedItems} />
     </div>
   );
 }
