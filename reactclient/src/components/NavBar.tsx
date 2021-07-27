@@ -6,9 +6,10 @@ interface Props {
     setSimpleItemAnalysisList: (itemList: any[]) => void
     setNavState: (state: string) => void
     navState: string
+    setCheckedItems: (checkedItems: any[]) => void
 }
 
-const NavBar = ({setSimpleItemAnalysisList, setNavState, navState} : Props) => {
+const NavBar = ({setSimpleItemAnalysisList, setNavState, navState, setCheckedItems} : Props) => {
     const [watchlistResponse, setWatchlistResponse] = useState<any>(null);
 
     const updateItem = async(item: any) => {
@@ -25,6 +26,7 @@ const NavBar = ({setSimpleItemAnalysisList, setNavState, navState} : Props) => {
 
     const handleItemClick = async (e: any, { name }: any) => {
         setNavState(name);
+        setCheckedItems([]);
         if(name === 'All Items')
         {
             axios.get(`https://localhost:5001/api/v1/Analytics?pageSize=100&page=1`).then(response => {

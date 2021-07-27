@@ -24,12 +24,11 @@ const changeHandler = (e: any, data: any, id: any, setCheckedItems: (checkedItem
 
 export default function SimpleItemAnalysisSegment({id, name, delta, examine, high, highTime, low, lowTime, prediction, setCheckedItems, checkedItems}: Props) {
 
-
     return (
         <Segment>
             <Grid>
                 <Grid.Column width='1'>
-                <Checkbox onChange={(e, data) => changeHandler(e, data, id, setCheckedItems, checkedItems)} />
+                <Checkbox checked={checkedItems.find(checkedId => checkedId === id) != null} onChange={(e, data) => changeHandler(e, data, id, setCheckedItems, checkedItems)} />
                 </Grid.Column>
                 <Grid.Column width='1'>
                     <Image avatar src={`https://services.runescape.com/m=itemdb_oldschool/obj_big.gif?id=${id}`} />
