@@ -60,33 +60,33 @@ export default function AnalysisDashboard({simpleItemAnalysisList, pageSize, set
     return (
         <Container>
             <Grid>
-                <Grid.Column width='6' floated='right'>
+                <Grid.Column width='3' floated='right'>
                 </Grid.Column>
-                <Grid.Column width='10' floated='right'>
+                <Grid.Column width='13' floated='right'>
                     <Button onClick={(e, data) => { navState === "All Items" ? watchItems(checkedItems) : unwatchItems(checkedItems)}} content={navState === "All Items" ? "Watch Items" : "Unwatch Items"} />
                 </Grid.Column>
             </Grid>
             <Grid>
-                <Grid.Column width='6' floated='right'>
+                <Grid.Column width='3' floated='right'>
                 </Grid.Column>
-                <Grid.Column width='10' floated='right'>
+                <Grid.Column width='13' floated='right'>
                     <SimpleItemAnalysisListHeader />
                 </Grid.Column>
             </Grid>
 
             <Grid>
-                <Grid.Column width='6' floated='right'>
+                <Grid.Column width='3' floated='right'>
                     <AnalysisFilters />
                 </Grid.Column>
-                <Grid.Column width='10' floated='right'>
+                <Grid.Column width='13' floated='right'>
                     <SimpleItemAnalysisList simpleItemAnalysisList={simpleItemAnalysisList} setCheckedItems={setCheckedItems} checkedItems={checkedItems}/>
                 </Grid.Column>
             </Grid>
 
             <Grid>
-                <Grid.Column width='6' floated='right'>
+                <Grid.Column width='3' floated='right'>
                 </Grid.Column>
-                <Grid.Column width='10' floated='right'>
+                <Grid.Column width='13' floated='right'>
                     {renderPagination(setSimpleItemAnalysisList, pageSize, navState)}
                 </Grid.Column>
             </Grid>
