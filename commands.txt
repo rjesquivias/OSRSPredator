@@ -1,0 +1,32 @@
+dotnet ef migrations add FixWatchList -s ..\OSRSPredator\
+dotnet ef database update -s ..\OSRSPredator\
+
+
+{
+    "id": 0,
+    "delta": 52222222,
+    "mostRecentSnapshot": {
+      "id": "DF8607D6-EAEA-48A7-BFE7-756E28118FD4",
+      "high": 830000000,
+      "highTime": 1626048426,
+      "low": 777777778,
+      "lowTime": 1626179011
+    },
+    "itemDetails": {
+      "examine": "A beautifully crafted axe, shaped by ancient smiths.",
+      "id": 20011,
+      "members": true,
+      "lowalch": 22000,
+      "limit": 40,
+      "value": 55000,
+      "highalch": 33000,
+      "icon": "3rd age axe.png",
+      "name": "3rd age axe"
+    },
+    "prediction": 999
+}
+
+
+
+
+

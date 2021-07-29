@@ -24,7 +24,6 @@ const changeHandler = (e: any, data: any, id: any, setCheckedItems: (checkedItem
 
 export default function SimpleItemAnalysisSegment({id, name, delta, examine, high, highTime, low, lowTime, prediction, setCheckedItems, checkedItems}: Props) {
 
-
     return (
         <Segment>
             <Grid>

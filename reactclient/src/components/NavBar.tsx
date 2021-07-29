@@ -9,14 +9,12 @@ interface Props {
 }
 
 const NavBar = ({setSimpleItemAnalysisList, setNavState, navState} : Props) => {
-    const [watchlistResponse, setWatchlistResponse] = useState<any>(null);
 
-    const updateItem = async(item: any) => {
-        const promises = [];
-        promises.push(axios.get(`https://localhost:5001/api/ItemPriceSnapshot/${item.snapshotId}`));
-        promises.push(axios.get(`https://localhost:5001/api/ItemDetail/${item.detailsId}`));
-
-        Promise.all(promises).then((responses) => {
+    function getItemDetails(item: any) {
+        return axios.all([
+            axios.get(`https://localhost:5001/api/ItemPriceSnapshot/${item.snapshotId}`),
+            axios.get(`https://localhost:5001/api/ItemDetail/${item.detailsId}`)
+        ]).then(responses => {
             item.mostRecentSnapshot = responses[0].data;
             item.itemDetails = responses[1].data;
             item.id = 0;
@@ -36,13 +34,12 @@ const NavBar = ({setSimpleItemAnalysisList, setNavState, navState} : Props) => {
                 var watchlist = response.data;
                 const promises: any[] = [];
                 watchlist.forEach((item: any) => {
-                    promises.push(updateItem(item));
+                    promises.push(getItemDetails(item))
                 })
 
-                Promise.all(promises).then((responses) => {
+                Promise.all(promises).then(() => {
                     console.log(watchlist)
-                    setWatchlistResponse(watchlist)
-                    setSimpleItemAnalysisList(watchlistResponse)
+                    setSimpleItemAnalysisList(watchlist)
                 })
             })
         }

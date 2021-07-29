@@ -12,7 +12,7 @@ export default function SimpleItemAnalysisList({simpleItemAnalysisList, setCheck
     return (
         <List>
             {simpleItemAnalysisList && simpleItemAnalysisList.map((simpleItemAnalysis: any) => (
-                <List.Item key={simpleItemAnalysis.id}>
+                <List.Item key={simpleItemAnalysis.itemDetails.id}>
                     <SimpleItemAnalysisSegment 
                         id={simpleItemAnalysis.itemDetails ? simpleItemAnalysis.itemDetails.id : "0"}
                         name={simpleItemAnalysis.itemDetails ? simpleItemAnalysis.itemDetails.name: 'null itemDetails'} 
