@@ -28,7 +28,7 @@ export default function SimpleItemAnalysisSegment({id, name, delta, examine, hig
         <Segment>
             <Grid>
                 <Grid.Column width='1'>
-                <Checkbox onChange={(e, data) => changeHandler(e, data, id, setCheckedItems, checkedItems)} />
+                <Checkbox checked={checkedItems.find(checkedId => checkedId === id) != null} onChange={(e, data) => changeHandler(e, data, id, setCheckedItems, checkedItems)} />
                 </Grid.Column>
                 <Grid.Column width='1'>
                     <Image avatar src={`https://services.runescape.com/m=itemdb_oldschool/obj_big.gif?id=${id}`} />

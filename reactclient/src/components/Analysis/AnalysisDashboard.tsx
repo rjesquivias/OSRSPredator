@@ -11,6 +11,8 @@ interface Props {
     pageSize: number
     setSimpleItemAnalysisList: (itemList: any[]) => void
     navState: string
+    setCheckedItems: (checkedItems: any[]) => void
+    checkedItems: any[]
 }
 
 const watchItems = async (checkedItems: number[]) => {
@@ -37,8 +39,7 @@ const unwatchItems = async (checkedItems: number[]) => {
     }
 }
 
-export default function AnalysisDashboard({simpleItemAnalysisList, pageSize, setSimpleItemAnalysisList, navState} : Props) {
-    const [checkedItems, setCheckedItems] = useState<any>([]);
+export default function AnalysisDashboard({simpleItemAnalysisList, pageSize, setSimpleItemAnalysisList, navState, setCheckedItems, checkedItems} : Props) {
 
     return (
         <Container>
