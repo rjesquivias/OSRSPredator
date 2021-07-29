@@ -39,6 +39,22 @@ const unwatchItems = async (checkedItems: number[]) => {
     }
 }
 
+const renderPagination = (setSimpleItemAnalysisList: any, pageSize: any, navState: any) => {
+    if(navState === "All Items")
+    {
+        return <PaginationCompact page={1} totalPages={3800/pageSize} updatePage={(page) => {
+            if(navState === "All Items") {
+                axios.get(`https://localhost:5001/api/v1/Analytics?pageSize=${pageSize}&page=${page}`).then(response => {
+                    console.log(response);
+                    setSimpleItemAnalysisList(response.data);
+                });
+            } else {
+                // TODO: Implement frontend pagination
+            }
+        }} />
+    }
+}
+
 export default function AnalysisDashboard({simpleItemAnalysisList, pageSize, setSimpleItemAnalysisList, navState, setCheckedItems, checkedItems} : Props) {
 
     return (
@@ -71,12 +87,7 @@ export default function AnalysisDashboard({simpleItemAnalysisList, pageSize, set
                 <Grid.Column width='6' floated='right'>
                 </Grid.Column>
                 <Grid.Column width='10' floated='right'>
-                    <PaginationCompact page={1} totalPages={3800/pageSize} updatePage={(page) => {
-                        axios.get(`https://localhost:5001/api/v1/Analytics?pageSize=${pageSize}&page=${page}`).then(response => {
-                            console.log(response);
-                            setSimpleItemAnalysisList(response.data);
-                        });
-                    }} />
+                    {renderPagination(setSimpleItemAnalysisList, pageSize, navState)}
                 </Grid.Column>
             </Grid>
         </Container>
