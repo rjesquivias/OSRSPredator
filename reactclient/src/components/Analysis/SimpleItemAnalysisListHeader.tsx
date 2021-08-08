@@ -1,4 +1,3 @@
-import { useState } from "react";
 import { Grid, Icon, Item, List, Segment } from "semantic-ui-react";
 
 function activateLasers() {

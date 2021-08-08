@@ -1,13 +1,16 @@
-import { useState } from "react";
-import { Button, Grid, Icon, Item, Segment } from "semantic-ui-react"
+import { Button, Grid, Icon, Segment } from "semantic-ui-react"
 
 function loadOptionalSegment(namePressed: any) {
     if(namePressed)
         return <Segment>OPTIONAL</Segment>
 }
 
-export default function AnalysisFilters() {
-    const [namePressed, setNamePressed] = useState(false);
+interface Props {
+    namePressed: boolean;
+    setNamePressed: any;
+}
+
+export default function AnalysisFilters({namePressed, setNamePressed} : Props) {
 
     return (
         <Segment.Group>

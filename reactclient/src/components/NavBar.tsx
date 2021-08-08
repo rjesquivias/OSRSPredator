@@ -1,12 +1,11 @@
 import axios from "axios";
-import { useState } from "react";
 import { Menu } from "semantic-ui-react";
 
 interface Props {
-    setSimpleItemAnalysisList: (itemList: any[]) => void
+    setSimpleItemAnalysisList: any
     setNavState: (state: string) => void
     navState: string
-    setCheckedItems: (checkedItems: any[]) => void
+    setCheckedItems: any
 }
 
 const NavBar = ({setSimpleItemAnalysisList, setNavState, navState, setCheckedItems} : Props) => {

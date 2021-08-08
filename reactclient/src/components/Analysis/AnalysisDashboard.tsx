@@ -1,5 +1,4 @@
 import axios from "axios";
-import { useState } from "react";
 import { Grid, Container, Segment, Button } from "semantic-ui-react"
 import PaginationCompact from "../Pagination";
 import AnalysisFilters from "./AnalysisFilters"
@@ -9,10 +8,12 @@ import SimpleItemAnalysisListHeader from "./SimpleItemAnalysisListHeader"
 interface Props {
     simpleItemAnalysisList: any[]
     pageSize: number
-    setSimpleItemAnalysisList: (itemList: any[]) => void
+    setSimpleItemAnalysisList: any
     navState: string
-    setCheckedItems: (checkedItems: any[]) => void
+    setCheckedItems: any
     checkedItems: any[]
+    namePressed: boolean
+    setNamePressed: any
 }
 
 const watchItems = async (checkedItems: number[]) => {
@@ -55,7 +56,7 @@ const renderPagination = (setSimpleItemAnalysisList: any, pageSize: any, navStat
     }
 }
 
-export default function AnalysisDashboard({simpleItemAnalysisList, pageSize, setSimpleItemAnalysisList, navState, setCheckedItems, checkedItems} : Props) {
+export default function AnalysisDashboard({simpleItemAnalysisList, pageSize, setSimpleItemAnalysisList, navState, setCheckedItems, checkedItems, namePressed, setNamePressed} : Props) {
 
     return (
         <Container>
@@ -76,7 +77,7 @@ export default function AnalysisDashboard({simpleItemAnalysisList, pageSize, set
 
             <Grid>
                 <Grid.Column width='3' floated='right'>
-                    <AnalysisFilters />
+                    <AnalysisFilters namePressed={namePressed} setNamePressed={setNamePressed} />
                 </Grid.Column>
                 <Grid.Column width='13' floated='right'>
                     <SimpleItemAnalysisList simpleItemAnalysisList={simpleItemAnalysisList} setCheckedItems={setCheckedItems} checkedItems={checkedItems}/>
