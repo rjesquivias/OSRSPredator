@@ -1,10 +1,14 @@
 import { observer } from 'mobx-react-lite';
-import { Segment, Image, Checkbox, Grid, Container, Header, List } from "semantic-ui-react"
+import { Segment, Image, Checkbox, Grid, Container, Header, List, Dimmer, Loader } from "semantic-ui-react"
 import { useStore } from '../../stores/store';
+import LoadingComponent from '../LoadingComponent';
 
 export default observer(function SimpleItemAnalysisList() {
     
     const { itemStore } = useStore();
+
+    if(itemStore.isListLoading)
+        return <LoadingComponent isActive={true} />
 
     return (
         <List>
@@ -22,7 +26,7 @@ export default observer(function SimpleItemAnalysisList() {
                             }} />
                             </Grid.Column>
                             <Grid.Column width='1'>
-                                <Image avatar src={itemStore.ITEM_AVATAR_URL + `${simpleItemAnalysis.itemDetails ? simpleItemAnalysis.itemDetails.id : "0"}`} />
+                                <Image dimmer={<LoadingComponent isActive={!itemStore.isImageLoaded(simpleItemAnalysis.itemDetails ? simpleItemAnalysis.itemDetails.id : "0")} />} avatar src={itemStore.ITEM_AVATAR_URL + `${simpleItemAnalysis.itemDetails ? simpleItemAnalysis.itemDetails.id : "0"}`} onLoad={() => {itemStore.setImageLoaded(simpleItemAnalysis.itemDetails ? simpleItemAnalysis.itemDetails.id : "0", true)}} />
                             </Grid.Column>
                             <Grid.Column width='4'>
                                 <Container>

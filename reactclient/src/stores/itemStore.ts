@@ -17,12 +17,14 @@ export default class ItemStore {
 
     simpleItemAnalysisList: any[] = [];
     simpleItemAnalysisMap: Map<number, any> = new Map();
+    simpleItemAnalysisImageLoadedMap: Map<number, boolean> = new Map();
     pageSize: number = 20;
     navState: string = this.ALL_ITEMS;
     checkedItems: any[] = [];
     namePressed: boolean = false;
     page: number = 1;
     totalPages = 3800/this.pageSize;
+    isListLoading: boolean = true;
 
     constructor() {
         makeAutoObservable(this)
@@ -45,12 +47,30 @@ export default class ItemStore {
         this.namePressed = namePressed;
     }
 
+    setIsListLoading = (isListLoading: boolean) => {
+        this.isListLoading = isListLoading;
+    }
+
+    setImageLoaded = (id: number, loaded: boolean) => {
+        this.simpleItemAnalysisImageLoadedMap.set(id, loaded);
+    }
+
+    isImageLoaded = (id: number) => {
+        var result = this.simpleItemAnalysisImageLoadedMap.get(id);
+        
+        if(result == undefined) return false;
+        return result;
+    }
+
     loadSimpleItemAnalysisList = async () => {
+        this.setIsListLoading(true);
         var response = await axios.get(`${this.ITEM_ANALYTICS_URL}?${this.QUERY_PARAM_PAGESIZE}=${this.pageSize}&${this.QUERY_PARAM_PAGE}=1`);
         this.setSimpleItemAnalysisList(response.data);
+        this.setIsListLoading(false);
     }
 
     loadWatchList = async () => {
+        this.setIsListLoading(true);
         var response = await axios.get(`${this.ITEM_ANALYTICS_URL}${this.ITEM_WATCHLIST_URL_PATH}?${this.QUERY_PARAM_PAGESIZE}=${this.pageSize}&${this.QUERY_PARAM_PAGE}=1`);
         var watchlist = response.data;
         const promises: any[] = [];
@@ -61,6 +81,7 @@ export default class ItemStore {
 
         await Promise.all(promises);
         this.setSimpleItemAnalysisList(watchlist)
+        this.setIsListLoading(false);
     }
 
     getItemDetails = async (item: any) => {
