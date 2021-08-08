@@ -1,4 +1,3 @@
-import axios from "axios";
 import { observer } from "mobx-react-lite";
 import { Menu } from "semantic-ui-react";
 import { useStore } from "../stores/store";
@@ -7,40 +6,12 @@ const NavBar = () => {
 
     const { itemStore } = useStore();
 
-    function getItemDetails(item: any) {
-        return axios.all([
-            axios.get(`https://localhost:5001/api/ItemPriceSnapshot/${item.snapshotId}`),
-            axios.get(`https://localhost:5001/api/ItemDetail/${item.detailsId}`)
-        ]).then(responses => {
-            item.mostRecentSnapshot = responses[0].data;
-            item.itemDetails = responses[1].data;
-            item.id = 0;
-        })
-    }
-
-    const handleItemClick = async (e: any, { name }: any) => {
+    const handleNavClick = async (e: any, { name }: any) => {
         itemStore.setNavState(name);
         itemStore.setCheckedItems([]);
-        if(name === 'All Items')
-        {
-            axios.get(`https://localhost:5001/api/v1/Analytics?pageSize=100&page=1`).then(response => {
-                console.log(response.data);
-                itemStore.setSimpleItemAnalysisList(response.data);
-            });
-        } else if(name === 'Watchlist') {
-            axios.get(`https://localhost:5001/api/v1/Analytics/Watchlist?pageSize=100&page=1`).then((response) => {
-                var watchlist = response.data;
-                const promises: any[] = [];
-                watchlist.forEach((item: any) => {
-                    promises.push(getItemDetails(item))
-                })
 
-                Promise.all(promises).then(() => {
-                    console.log(watchlist)
-                    itemStore.setSimpleItemAnalysisList(watchlist)
-                })
-            })
-        }
+        if(name === itemStore.ALL_ITEMS) itemStore.loadSimpleItemAnalysisList();
+        else if(name === itemStore.WATCHLIST) itemStore.loadWatchList();
     }
 
     return (
@@ -52,14 +23,14 @@ const NavBar = () => {
 
             <Menu pointing secondary className="right menu">
                 <Menu.Item
-                    name='All Items'
-                    active={itemStore.navState === 'All Items'}
-                    onClick={handleItemClick}
+                    name={itemStore.ALL_ITEMS}
+                    active={itemStore.navState === itemStore.ALL_ITEMS}
+                    onClick={handleNavClick}
                 />
                 <Menu.Item
-                    name='Watchlist'
-                    active={itemStore.navState === 'Watchlist'}
-                    onClick={handleItemClick}
+                    name={itemStore.WATCHLIST}
+                    active={itemStore.navState === itemStore.WATCHLIST}
+                    onClick={handleNavClick}
                 />
             </Menu>
             

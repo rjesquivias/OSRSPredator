@@ -2,11 +2,6 @@ import { observer } from "mobx-react-lite";
 import { Button, Grid, Icon, Segment } from "semantic-ui-react"
 import { useStore } from "../../stores/store"
 
-function loadOptionalSegment(namePressed: any) {
-    if(namePressed)
-        return <Segment>OPTIONAL</Segment>
-}
-
 export default observer(function AnalysisFilters() {
 
     const { itemStore } = useStore();
@@ -25,7 +20,7 @@ export default observer(function AnalysisFilters() {
                     </Grid.Column>
                 </Grid>
             </Segment>
-                {loadOptionalSegment(itemStore.namePressed)}
+                {itemStore.namePressed && <Segment>OPTIONAL</Segment>}
             <Segment>
                 <Grid>
                     <Grid.Column width='12'>
