@@ -1,14 +1,11 @@
 import axios from "axios";
+import { observer } from "mobx-react-lite";
 import { Menu } from "semantic-ui-react";
+import { useStore } from "../stores/store";
 
-interface Props {
-    setSimpleItemAnalysisList: any
-    setNavState: (state: string) => void
-    navState: string
-    setCheckedItems: any
-}
+const NavBar = () => {
 
-const NavBar = ({setSimpleItemAnalysisList, setNavState, navState, setCheckedItems} : Props) => {
+    const { itemStore } = useStore();
 
     function getItemDetails(item: any) {
         return axios.all([
@@ -22,13 +19,13 @@ const NavBar = ({setSimpleItemAnalysisList, setNavState, navState, setCheckedIte
     }
 
     const handleItemClick = async (e: any, { name }: any) => {
-        setNavState(name);
-        setCheckedItems([]);
+        itemStore.setNavState(name);
+        itemStore.setCheckedItems([]);
         if(name === 'All Items')
         {
             axios.get(`https://localhost:5001/api/v1/Analytics?pageSize=100&page=1`).then(response => {
                 console.log(response.data);
-                setSimpleItemAnalysisList(response.data);
+                itemStore.setSimpleItemAnalysisList(response.data);
             });
         } else if(name === 'Watchlist') {
             axios.get(`https://localhost:5001/api/v1/Analytics/Watchlist?pageSize=100&page=1`).then((response) => {
@@ -40,7 +37,7 @@ const NavBar = ({setSimpleItemAnalysisList, setNavState, navState, setCheckedIte
 
                 Promise.all(promises).then(() => {
                     console.log(watchlist)
-                    setSimpleItemAnalysisList(watchlist)
+                    itemStore.setSimpleItemAnalysisList(watchlist)
                 })
             })
         }
@@ -56,12 +53,12 @@ const NavBar = ({setSimpleItemAnalysisList, setNavState, navState, setCheckedIte
             <Menu pointing secondary className="right menu">
                 <Menu.Item
                     name='All Items'
-                    active={navState === 'All Items'}
+                    active={itemStore.navState === 'All Items'}
                     onClick={handleItemClick}
                 />
                 <Menu.Item
                     name='Watchlist'
-                    active={navState === 'Watchlist'}
+                    active={itemStore.navState === 'Watchlist'}
                     onClick={handleItemClick}
                 />
             </Menu>
@@ -77,9 +74,8 @@ const NavBar = ({setSimpleItemAnalysisList, setNavState, navState, setCheckedIte
                     <i className="large icon home"/>
                 </div>
             </div>
-        </div>
-            
+        </div>      
     )
 }
 
-export default NavBar
+export default observer(NavBar);

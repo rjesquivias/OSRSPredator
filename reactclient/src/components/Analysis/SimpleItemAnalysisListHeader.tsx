@@ -8,7 +8,7 @@ export default function SimpleItemAnalysisListHeader() {
 
     return (
         <Segment basic className="removePadding">
-        <Grid>
+            <Grid>
                 <Grid.Column width='1'>
                 </Grid.Column>
                 <Grid.Column width='1'>

@@ -1,16 +1,15 @@
+import { observer } from "mobx-react-lite";
 import { Button, Grid, Icon, Segment } from "semantic-ui-react"
+import { useStore } from "../../stores/store"
 
 function loadOptionalSegment(namePressed: any) {
     if(namePressed)
         return <Segment>OPTIONAL</Segment>
 }
 
-interface Props {
-    namePressed: boolean;
-    setNamePressed: any;
-}
+export default observer(function AnalysisFilters() {
 
-export default function AnalysisFilters({namePressed, setNamePressed} : Props) {
+    const { itemStore } = useStore();
 
     return (
         <Segment.Group>
@@ -20,13 +19,13 @@ export default function AnalysisFilters({namePressed, setNamePressed} : Props) {
                         Name 
                     </Grid.Column>
                     <Grid.Column width='4'>
-                        <Button circular icon size='tiny' color='blue' onClick={() => setNamePressed(!namePressed)}>
+                        <Button circular icon size='tiny' color='blue' onClick={() => itemStore.setNamePressed(!itemStore.namePressed)}>
                             <Icon name='plus'></Icon>
                         </Button>
                     </Grid.Column>
                 </Grid>
             </Segment>
-            {loadOptionalSegment(namePressed)}
+                {loadOptionalSegment(itemStore.namePressed)}
             <Segment>
                 <Grid>
                     <Grid.Column width='12'>
@@ -96,4 +95,4 @@ export default function AnalysisFilters({namePressed, setNamePressed} : Props) {
                 </Grid></Segment>
         </Segment.Group>
     ) 
-}
+})
