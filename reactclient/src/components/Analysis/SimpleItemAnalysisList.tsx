@@ -2,6 +2,7 @@ import { observer } from 'mobx-react-lite';
 import { Segment, Image, Checkbox, Grid, Container, Header, List, Dimmer, Loader } from "semantic-ui-react"
 import { useStore } from '../../stores/store';
 import LoadingComponent from '../LoadingComponent';
+import { NavLink } from 'react-router-dom';
 
 export default observer(function SimpleItemAnalysisList() {
     
@@ -13,7 +14,7 @@ export default observer(function SimpleItemAnalysisList() {
     return (
         <List>
             {itemStore.simpleItemAnalysisList && itemStore.simpleItemAnalysisList.map((simpleItemAnalysis: any) => (
-                <List.Item key={simpleItemAnalysis.itemDetails.id}>
+                <List.Item key={simpleItemAnalysis.itemDetails ? simpleItemAnalysis.itemDetails.id : "0"}>
                     <Segment>
                         <Grid>
                             <Grid.Column width='1'>
@@ -30,7 +31,7 @@ export default observer(function SimpleItemAnalysisList() {
                             </Grid.Column>
                             <Grid.Column width='4'>
                                 <Container>
-                                    <Header as='h4'>{simpleItemAnalysis.itemDetails ? simpleItemAnalysis.itemDetails.name: 'null itemDetails'}</Header>
+                                    <Header as={NavLink} to={`/itemDashboard/${simpleItemAnalysis.itemDetails ? simpleItemAnalysis.itemDetails.id : "0"}`}>{simpleItemAnalysis.itemDetails ? simpleItemAnalysis.itemDetails.name: 'null itemDetails'}</Header>
                                     {simpleItemAnalysis.itemDetails ? simpleItemAnalysis.itemDetails.examine: 'null itemDetails'}
                                 </Container>
                             </Grid.Column>

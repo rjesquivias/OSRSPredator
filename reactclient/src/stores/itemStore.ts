@@ -39,6 +39,10 @@ export default class ItemStore {
         this.navState = navState;
     }
 
+    getNavState = (): string => {
+        return this.navState
+    }
+
     setCheckedItems = (checkedItems: any[]) => {
         this.checkedItems = checkedItems;
     }

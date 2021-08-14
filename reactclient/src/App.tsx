@@ -1,20 +1,14 @@
 import NavBar from "./components/NavBar";
 import AnalysisDashboard from "./components/Analysis/AnalysisDashboard";
-import { useEffect } from "react";
-import { useStore } from "./stores/store";
 import { observer } from "mobx-react-lite";
+import { Route } from 'react-router-dom';
 
 function App() {
-  const { itemStore } = useStore();
-
-  useEffect(() => {
-      itemStore.loadSimpleItemAnalysisList();
-  }, [itemStore]);
-
   return (
     <div className="container">
       <NavBar />
-      <AnalysisDashboard />
+      <Route exact path='/itemDashboard' component={AnalysisDashboard} />
+      <Route exact path='/watchList' component={AnalysisDashboard} />
     </div>
   );
 }

@@ -1,6 +1,7 @@
 import { observer } from "mobx-react-lite";
 import { Menu } from "semantic-ui-react";
 import { useStore } from "../stores/store";
+import { NavLink, useRouteMatch } from "react-router-dom";
 
 const NavBar = () => {
 
@@ -9,9 +10,6 @@ const NavBar = () => {
     const handleNavClick = async (e: any, { name }: any) => {
         itemStore.setNavState(name);
         itemStore.setCheckedItems([]);
-
-        if(name === itemStore.ALL_ITEMS) itemStore.loadSimpleItemAnalysisList();
-        else if(name === itemStore.WATCHLIST) itemStore.loadWatchList();
     }
 
     return (
@@ -22,12 +20,12 @@ const NavBar = () => {
             </div>
 
             <Menu pointing secondary className="right menu">
-                <Menu.Item
+                <Menu.Item as={NavLink} to={"/itemDashboard"}
                     name={itemStore.ALL_ITEMS}
                     active={itemStore.navState === itemStore.ALL_ITEMS}
                     onClick={handleNavClick}
                 />
-                <Menu.Item
+                <Menu.Item as={NavLink} to={"/watchList"}
                     name={itemStore.WATCHLIST}
                     active={itemStore.navState === itemStore.WATCHLIST}
                     onClick={handleNavClick}

@@ -1,4 +1,5 @@
 import { observer } from "mobx-react-lite";
+import { useEffect } from "react";
 import { Grid, Container, Button } from "semantic-ui-react"
 import { useStore } from "../../stores/store";
 import PaginationCompact from "../Pagination";
@@ -9,6 +10,12 @@ import SimpleItemAnalysisListHeader from "./SimpleItemAnalysisListHeader"
 export default observer(function AnalysisDashboard() {
 
     const { itemStore } = useStore();
+    
+    useEffect(() => {
+        if(itemStore.getNavState() === itemStore.ALL_ITEMS) itemStore.loadSimpleItemAnalysisList();
+        else if(itemStore.getNavState() === itemStore.WATCHLIST) itemStore.loadWatchList();
+    }, [itemStore]);
+    
     return (
         <Container>
             <Grid>
