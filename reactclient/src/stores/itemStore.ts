@@ -25,6 +25,8 @@ export default class ItemStore {
     page: number = 1;
     totalPages = 3800/this.pageSize;
     isListLoading: boolean = true;
+    isDetailsLoading: boolean = true;
+    selectedDetailsItem: any;
 
     constructor() {
         makeAutoObservable(this)
@@ -55,8 +57,24 @@ export default class ItemStore {
         this.isListLoading = isListLoading;
     }
 
+    getIsListLoading = (): boolean => {
+        return this.isListLoading;
+    }
+
+    setIsDetailsLoading = (isDetailsLoading: boolean) => {
+        this.isDetailsLoading = isDetailsLoading;
+    }
+
+    getIsDetailsLoading = (): boolean => {
+        return this.isDetailsLoading;
+    }
+
     setImageLoaded = (id: number, loaded: boolean) => {
         this.simpleItemAnalysisImageLoadedMap.set(id, loaded);
+    }
+
+    getSelectedDetailsItem = (): any => {
+        return this.selectedDetailsItem;
     }
 
     isImageLoaded = (id: number) => {
@@ -97,6 +115,12 @@ export default class ItemStore {
         item.mostRecentSnapshot = responses[0].data;
         item.itemDetails = responses[1].data;
         item.id = 0;
+    }
+
+    getItemAnalytics = async (id: string) => {
+        this.isDetailsLoading = true
+        this.selectedDetailsItem = await axios.get(`${this.ITEM_ANALYTICS_URL}/${id}`)
+        this.isDetailsLoading = false
     }
 
     updatePage = async (page: number | string | undefined) => {

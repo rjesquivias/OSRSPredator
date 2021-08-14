@@ -2,13 +2,13 @@ import { observer } from 'mobx-react-lite';
 import { Segment, Image, Checkbox, Grid, Container, Header, List, Dimmer, Loader } from "semantic-ui-react"
 import { useStore } from '../../stores/store';
 import LoadingComponent from '../LoadingComponent';
-import { NavLink } from 'react-router-dom';
+import { Link } from 'react-router-dom';
 
 export default observer(function SimpleItemAnalysisList() {
     
     const { itemStore } = useStore();
 
-    if(itemStore.isListLoading)
+    if(itemStore.getIsListLoading())
         return <LoadingComponent isActive={true} />
 
     return (
@@ -31,7 +31,7 @@ export default observer(function SimpleItemAnalysisList() {
                             </Grid.Column>
                             <Grid.Column width='4'>
                                 <Container>
-                                    <Header as={NavLink} to={`/itemDashboard/${simpleItemAnalysis.itemDetails ? simpleItemAnalysis.itemDetails.id : "0"}`}>{simpleItemAnalysis.itemDetails ? simpleItemAnalysis.itemDetails.name: 'null itemDetails'}</Header>
+                                    <Header as={Link} to={`/itemDashboard/${simpleItemAnalysis.itemDetails ? simpleItemAnalysis.itemDetails.id : "0"}`}>{simpleItemAnalysis.itemDetails ? simpleItemAnalysis.itemDetails.name: 'null itemDetails'}</Header>
                                     {simpleItemAnalysis.itemDetails ? simpleItemAnalysis.itemDetails.examine: 'null itemDetails'}
                                 </Container>
                             </Grid.Column>
