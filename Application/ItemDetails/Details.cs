@@ -1,10 +1,5 @@
-﻿using Domain;
-using MediatR;
+﻿using MediatR;
 using Persistence;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
 
@@ -12,12 +7,12 @@ namespace Application.ItemDetails
 {
     public class Details
     {
-        public class Query : IRequest<ItemDetail>
+        public class Query : IRequest<Domain.DefaultItemDetails>
         {
             public long Id { get; set; }
         }
 
-        public class Handler : IRequestHandler<Query, ItemDetail>
+        public class Handler : IRequestHandler<Query, Domain.DefaultItemDetails>
         {
             private readonly DataContext context;
 
@@ -26,7 +21,7 @@ namespace Application.ItemDetails
                 this.context = context;
             }
 
-            public async Task<ItemDetail> Handle(Query request, CancellationToken cancellationToken)
+            public async Task<Domain.DefaultItemDetails> Handle(Query request, CancellationToken cancellationToken)
             {
                 return await context.ItemDetails.FindAsync(request.Id);
             }

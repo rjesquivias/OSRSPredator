@@ -1,8 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿using System.Collections.Generic;
 
 namespace Domain
 {
@@ -10,6 +6,6 @@ namespace Domain
     {
         public long Id { get; set; }
 
-        public ICollection<ItemPriceSnapshot> historical { get; set; }
+        public List<ItemPriceSnapshot> historical { get; set; }
     }
 }

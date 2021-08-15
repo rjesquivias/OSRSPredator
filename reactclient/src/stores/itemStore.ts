@@ -7,11 +7,8 @@ export default class ItemStore {
     readonly WATCH_ITEMS = "Watch Items";
     readonly UNWATCH_ITEMS = "Unwatch Items";
     readonly ITEM_AVATAR_URL = "https://services.runescape.com/m=itemdb_oldschool/obj_big.gif?id=";
-    readonly ITEM_ANALYTICS_URL = "https://localhost:5001/api/v1/Analytics";
-    readonly ITEM_PRICE_SNAPSHOT_URL = "https://localhost:5001/api/ItemPriceSnapshot";
-    readonly ITEM_DETAIL_URL = "https://localhost:5001/api/ItemDetail";
-    readonly ITEM_WATCHLIST_URL_PATH = "/Watchlist";
-    readonly ITEM_UNWATCHLIST_URL_PATH = "/Unwatchlist";
+    readonly ITEM_DETAILS_URL = "https://localhost:5001/api/v1/ItemDetails";
+    readonly ITEM_WATCHLIST_URL = "https://localhost:5001/api/v1/WatchList";
     readonly QUERY_PARAM_PAGESIZE = "pageSize";
     readonly QUERY_PARAM_PAGE = "page";
 
@@ -34,7 +31,14 @@ export default class ItemStore {
 
     setSimpleItemAnalysisList = (itemAnalysisList: any[]) => {
         this.simpleItemAnalysisList = itemAnalysisList;
-        this.simpleItemAnalysisList.map((item: any) => this.simpleItemAnalysisMap.set(item.itemDetails.id, item));
+        this.simpleItemAnalysisList.map((item: any) => {
+            if(item.itemDetails == null) {
+                item.itemDetails = {
+                    id : 0
+                }
+            }
+            this.simpleItemAnalysisMap.set(item.itemDetails.id, item)
+        });
     }
 
     setNavState = (navState: string) => {
@@ -84,69 +88,39 @@ export default class ItemStore {
         return result;
     }
 
-    loadSimpleItemAnalysisList = async () => {
+    loadAllItems = async (page: number | string | undefined) => {
         this.setIsListLoading(true);
-        var response = await axios.get(`${this.ITEM_ANALYTICS_URL}?${this.QUERY_PARAM_PAGESIZE}=${this.pageSize}&${this.QUERY_PARAM_PAGE}=1`);
+        var response = await axios.get(`${this.ITEM_DETAILS_URL}?${this.QUERY_PARAM_PAGESIZE}=${this.pageSize}&${this.QUERY_PARAM_PAGE}=${page}`);
+        console.log(response.data);
         this.setSimpleItemAnalysisList(response.data);
         this.setIsListLoading(false);
     }
 
-    loadWatchList = async () => {
-        this.setIsListLoading(true);
-        var response = await axios.get(`${this.ITEM_ANALYTICS_URL}${this.ITEM_WATCHLIST_URL_PATH}?${this.QUERY_PARAM_PAGESIZE}=${this.pageSize}&${this.QUERY_PARAM_PAGE}=1`);
-        var watchlist = response.data;
-        const promises: any[] = [];
-
-        watchlist.forEach((item: any) => {
-            promises.push(this.getItemDetails(item))
-        })
-
-        await Promise.all(promises);
-        this.setSimpleItemAnalysisList(watchlist)
-        this.setIsListLoading(false);
-    }
-
-    getItemDetails = async (item: any) => {
-        var responses = await axios.all([
-            axios.get(`${this.ITEM_PRICE_SNAPSHOT_URL}/${item.snapshotId}`),
-            axios.get(`${this.ITEM_DETAIL_URL}/${item.detailsId}`)
-        ]);
-      
-        item.mostRecentSnapshot = responses[0].data;
-        item.itemDetails = responses[1].data;
-        item.id = 0;
-    }
-
     getItemAnalytics = async (id: string) => {
         this.isDetailsLoading = true
-        this.selectedDetailsItem = await axios.get(`${this.ITEM_ANALYTICS_URL}/${id}`)
+        this.selectedDetailsItem = await axios.get(`${this.ITEM_DETAILS_URL}/${id}`)
         this.isDetailsLoading = false
     }
 
-    updatePage = async (page: number | string | undefined) => {
-        if(this.navState === this.ALL_ITEMS) {
-            var response = await axios.get(`${this.ITEM_ANALYTICS_URL}?${this.QUERY_PARAM_PAGESIZE}=${this.pageSize}&${this.QUERY_PARAM_PAGE}=${page}`);
-            this.setSimpleItemAnalysisList(response.data);
-        } else {
-            // TODO: Implement frontend pagination
-        }
+    loadWatchList = async () => {
+        this.setIsListLoading(true);
+        var response = await axios.get(`${this.ITEM_WATCHLIST_URL}?${this.QUERY_PARAM_PAGESIZE}=${this.pageSize}&${this.QUERY_PARAM_PAGE}=1`);
+        console.log(response.data);
+        this.setSimpleItemAnalysisList(response.data);
+        this.setIsListLoading(false);
     }
 
     watchItems = async () => {
-        // convert list of names into the proper post format
-        for (const id of this.checkedItems)
+        for (const item of this.checkedItems)
         {
-            var response = await axios.get(`${this.ITEM_ANALYTICS_URL}/${id}`);
-            axios.post(this.ITEM_ANALYTICS_URL + this.ITEM_WATCHLIST_URL_PATH, response.data);
+            await axios.post(this.ITEM_WATCHLIST_URL, item);
         }
     }
 
     unwatchItems = async () => {
-        // convert list of names into the proper post format
-        for (const id of this.checkedItems)
+        for (const item of this.checkedItems)
         {
-            var response = await axios.get(`${this.ITEM_ANALYTICS_URL}/${id}`);
-            await axios.post(this.ITEM_ANALYTICS_URL + this.ITEM_UNWATCHLIST_URL_PATH, response.data);
+            await axios.delete(this.ITEM_WATCHLIST_URL, { data: item });
         }
 
         this.loadWatchList();

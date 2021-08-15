@@ -12,7 +12,7 @@ export default observer(function AnalysisDashboard() {
     const { itemStore } = useStore();
     
     useEffect(() => {
-        if(itemStore.getNavState() === itemStore.ALL_ITEMS) itemStore.loadSimpleItemAnalysisList();
+        if(itemStore.getNavState() === itemStore.ALL_ITEMS) itemStore.loadAllItems(1);
         else if(itemStore.getNavState() === itemStore.WATCHLIST) itemStore.loadWatchList();
     }, [itemStore]);
     

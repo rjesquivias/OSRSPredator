@@ -1,7 +1,7 @@
 import { observer } from "mobx-react-lite";
 import { Menu } from "semantic-ui-react";
 import { useStore } from "../stores/store";
-import { NavLink, useRouteMatch } from "react-router-dom";
+import { NavLink } from "react-router-dom";
 
 const NavBar = () => {
 

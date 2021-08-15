@@ -1,11 +1,8 @@
-﻿using Domain;
-using MediatR;
+﻿using MediatR;
 using Microsoft.EntityFrameworkCore;
 using Persistence;
-using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
 
@@ -13,11 +10,14 @@ namespace Application.ItemDetails
 {
     public class List
     {
-        public class Query : IRequest<List<ItemDetail>>
+        public class Query : IRequest<List<Domain.DefaultItemDetails>>
         {
+            public int pageSize  { get; set; }
+
+            public int page { get; set;}
         }
 
-        public class Handler : IRequestHandler<Query, List<ItemDetail>>
+        public class Handler : IRequestHandler<Query, List<Domain.DefaultItemDetails>>
         {
             private readonly DataContext context;
 
@@ -26,9 +26,9 @@ namespace Application.ItemDetails
                 this.context = context;
             }
 
-            public async Task<List<ItemDetail>> Handle(Query request, CancellationToken cancellationToken)
+            public async Task<List<Domain.DefaultItemDetails>> Handle(Query request, CancellationToken cancellationToken)
             {
-                return await context.ItemDetails.ToListAsync(cancellationToken);
+                return await Task.Run(() => context.ItemDetails.Include(item => item.mostRecentSnapshot).ToList().GetRange((request.page - 1) * request.pageSize, request.pageSize));
             }
         }
     }

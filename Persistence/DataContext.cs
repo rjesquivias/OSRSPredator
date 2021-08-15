@@ -9,12 +9,12 @@ namespace Persistence
         {
         }
 
-        public DbSet<ItemDetail> ItemDetails { get; set; }
+        public DbSet<DefaultItemDetails> ItemDetails { get; set; }
+
+        public DbSet<WatchListItemDetails> WatchList { get; set; }
 
         public DbSet<ItemHistorical> ItemHistoricals { get; set; }
 
         public DbSet<ItemPriceSnapshot> ItemPriceSnapshots { get; set; }
-
-        public DbSet<SimpleItemAnalysis> WatchList { get; set; }
     }
 }

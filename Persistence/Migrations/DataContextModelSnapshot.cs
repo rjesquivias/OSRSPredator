@@ -16,7 +16,7 @@ namespace Persistence.Migrations
             modelBuilder
                 .HasAnnotation("ProductVersion", "5.0.7");
 
-            modelBuilder.Entity("Domain.ItemDetail", b =>
+            modelBuilder.Entity("Domain.DefaultItemDetails", b =>
                 {
                     b.Property<long>("Id")
                         .HasColumnType("INTEGER");
@@ -43,15 +43,23 @@ namespace Persistence.Migrations
                     b.Property<bool>("members")
                         .HasColumnType("INTEGER");
 
+                    b.Property<string>("mostRecentSnapshotId")
+                        .HasColumnType("TEXT");
+
                     b.Property<string>("name")
                         .IsRequired()
                         .HasMaxLength(50)
                         .HasColumnType("TEXT");
 
+                    b.Property<long>("prediction")
+                        .HasColumnType("INTEGER");
+
                     b.Property<long>("value")
                         .HasColumnType("INTEGER");
 
                     b.HasKey("Id");
+
+                    b.HasIndex("mostRecentSnapshotId");
 
                     b.ToTable("ItemDetails");
                 });
@@ -95,32 +103,61 @@ namespace Persistence.Migrations
                     b.ToTable("ItemPriceSnapshots");
                 });
 
-            modelBuilder.Entity("Domain.SimpleItemAnalysis", b =>
+            modelBuilder.Entity("Domain.WatchListItemDetails", b =>
                 {
                     b.Property<long>("Id")
-                        .ValueGeneratedOnAdd()
                         .HasColumnType("INTEGER");
 
-                    b.Property<long>("delta")
+                    b.Property<string>("examine")
+                        .IsRequired()
+                        .HasMaxLength(200)
+                        .HasColumnType("TEXT");
+
+                    b.Property<long>("highalch")
                         .HasColumnType("INTEGER");
 
-                    b.Property<long>("detailsId")
+                    b.Property<string>("icon")
+                        .IsRequired()
+                        .HasMaxLength(50)
+                        .HasColumnType("TEXT");
+
+                    b.Property<long>("limit")
                         .HasColumnType("INTEGER");
+
+                    b.Property<long>("lowalch")
+                        .HasColumnType("INTEGER");
+
+                    b.Property<bool>("members")
+                        .HasColumnType("INTEGER");
+
+                    b.Property<string>("mostRecentSnapshotId")
+                        .HasColumnType("TEXT");
+
+                    b.Property<string>("name")
+                        .IsRequired()
+                        .HasMaxLength(50)
+                        .HasColumnType("TEXT");
 
                     b.Property<long>("prediction")
                         .HasColumnType("INTEGER");
 
-                    b.Property<string>("snapshotId")
-                        .IsRequired()
-                        .HasColumnType("TEXT");
+                    b.Property<long>("value")
+                        .HasColumnType("INTEGER");
 
                     b.HasKey("Id");
 
-                    b.HasIndex("detailsId");
-
-                    b.HasIndex("snapshotId");
+                    b.HasIndex("mostRecentSnapshotId");
 
                     b.ToTable("WatchList");
+                });
+
+            modelBuilder.Entity("Domain.DefaultItemDetails", b =>
+                {
+                    b.HasOne("Domain.ItemPriceSnapshot", "mostRecentSnapshot")
+                        .WithMany()
+                        .HasForeignKey("mostRecentSnapshotId");
+
+                    b.Navigation("mostRecentSnapshot");
                 });
 
             modelBuilder.Entity("Domain.ItemPriceSnapshot", b =>
@@ -130,21 +167,11 @@ namespace Persistence.Migrations
                         .HasForeignKey("ItemHistoricalId");
                 });
 
-            modelBuilder.Entity("Domain.SimpleItemAnalysis", b =>
+            modelBuilder.Entity("Domain.WatchListItemDetails", b =>
                 {
-                    b.HasOne("Domain.ItemDetail", "itemDetails")
-                        .WithMany()
-                        .HasForeignKey("detailsId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
                     b.HasOne("Domain.ItemPriceSnapshot", "mostRecentSnapshot")
                         .WithMany()
-                        .HasForeignKey("snapshotId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.Navigation("itemDetails");
+                        .HasForeignKey("mostRecentSnapshotId");
 
                     b.Navigation("mostRecentSnapshot");
                 });

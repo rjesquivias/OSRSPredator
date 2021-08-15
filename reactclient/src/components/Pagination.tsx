@@ -15,7 +15,7 @@ const PaginationCompact = () => {
       lastItem={null}
       siblingRange={1}
       totalPages={itemStore.totalPages}
-      onPageChange={(event, data) => itemStore.updatePage(data.activePage)}
+      onPageChange={(event, data) => itemStore.loadAllItems(data.activePage)}
     />
   )
 }

@@ -5,12 +5,11 @@ using System.Threading;
 using System.Net.Http;
 using Microsoft.Extensions.Logging;
 using Newtonsoft.Json;
-using Domain;
 using System.Collections.Generic;
-using Application.DTO;
-using System.Linq;
 using System;
 using Microsoft.EntityFrameworkCore;
+using Domain;
+using System.Linq;
 
 namespace Application.ItemDetails
 {
@@ -42,15 +41,25 @@ namespace Application.ItemDetails
                     using (var response = await httpClient.GetAsync("https://prices.runescape.wiki/api/v1/osrs/mapping"))
                     {
                         string data = await response.Content.ReadAsStringAsync();
-                        List<ItemDetail> itemDetails = JsonConvert.DeserializeObject<List<ItemDetail>>(data);
-                        foreach (var entity in context.ItemDetails)
-                            context.ItemDetails.Remove(entity);
-                        context.AddRange(itemDetails);
-                        context.SaveChanges();
+                        List<Domain.DefaultItemDetails> itemDetails = JsonConvert.DeserializeObject<List<Domain.DefaultItemDetails>>(data);
+
+                        foreach (var item in itemDetails) {
+                            var itemDetailsDBEntry = await context.ItemDetails.FindAsync(item.Id);
+                            var itemHistorical = await context.ItemHistoricals.Include(itemHistoricals => itemHistoricals.historical).FirstOrDefaultAsync(x => x.Id == item.Id);
+                            if(itemHistorical != null && itemHistorical.historical != null)
+                            {
+                                itemHistorical.historical.Sort((ItemPriceSnapshot a, ItemPriceSnapshot b) => {
+                                    var A = a.highTime > a.lowTime ? a.highTime : a.lowTime;
+                                    var B = b.highTime > b.lowTime ? b.highTime : b.lowTime;
+                                    return A.CompareTo(B);
+                                });
+
+                                itemDetailsDBEntry.mostRecentSnapshot = itemHistorical.historical.First();
+                                context.SaveChanges();
+                            }
+                        }
                     }
-
                 }
-
                 return Unit.Value;
             }
         }

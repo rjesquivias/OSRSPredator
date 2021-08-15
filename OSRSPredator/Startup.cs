@@ -8,7 +8,6 @@ using Microsoft.OpenApi.Models;
 using Persistence;
 using MediatR;
 using Application.ItemPriceSnapshots;
-using Application.Generators;
 
 namespace OSRSPredator
 {
@@ -36,11 +35,8 @@ namespace OSRSPredator
             {
                 opt.UseSqlite(Configuration.GetConnectionString("DefaultConnection"));
             });
+
             services.AddMediatR(typeof(List.Handler).Assembly);
-
-            services.AddScoped<ISimpleAnalysisGenerator, SimpleAnalysisGenerator>();
-            services.AddScoped<IWatchListGenerator, WatchListGenerator>();
-
             services.AddCors(opt => {
                 opt.AddPolicy("CorsPolicy", policy => {
                     policy.AllowAnyMethod().AllowAnyHeader().WithOrigins("http://localhost:3000");
