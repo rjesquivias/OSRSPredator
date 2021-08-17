@@ -29,8 +29,12 @@ namespace Application.WatchList
             {
                 if(context.WatchList.Any(item => item.Id == request.itemDetails.Id)) return Unit.Value;
 
-                await context.WatchList.AddAsync(request.itemDetails);
-                await context.SaveChangesAsync();
+                var mostRecentSnapshot = await context.ItemPriceSnapshots.FindAsync(request.itemDetails.mostRecentSnapshot.Id);
+                request.itemDetails.mostRecentSnapshot = mostRecentSnapshot;
+
+                context.WatchList.Add(request.itemDetails);
+                context.SaveChanges();
+
                 return Unit.Value;
             }
         }

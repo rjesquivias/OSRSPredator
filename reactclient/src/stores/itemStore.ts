@@ -123,6 +123,7 @@ export default class ItemStore {
             await axios.delete(this.ITEM_WATCHLIST_URL, { data: item });
         }
 
+        this.setCheckedItems([]);
         this.loadWatchList();
     }
 }
