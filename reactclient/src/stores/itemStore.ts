@@ -32,12 +32,7 @@ export default class ItemStore {
     setSimpleItemAnalysisList = (itemAnalysisList: any[]) => {
         this.simpleItemAnalysisList = itemAnalysisList;
         this.simpleItemAnalysisList.map((item: any) => {
-            if(item.itemDetails == null) {
-                item.itemDetails = {
-                    id : 0
-                }
-            }
-            this.simpleItemAnalysisMap.set(item.itemDetails.id, item)
+            this.simpleItemAnalysisMap.set(item.id, item)
         });
     }
 

@@ -48,7 +48,7 @@ export default observer(function SimpleItemAnalysisList() {
                                 </Container>
                             </Grid.Column>
                             <Grid.Column width='2'>
-                                {itemDetails.delta ? itemDetails.delta : 0}
+                                {itemDetails.mostRecentSnapshot ? itemDetails.mostRecentSnapshot.high - itemDetails.mostRecentSnapshot.low : 0}
                             </Grid.Column>
                             <Grid.Column width='1'>
                                 {itemDetails.prediction}
