@@ -14,25 +14,11 @@ namespace Application.WatchList
             public Domain.WatchListItemDetails itemDetails { get; set; }
         }
 
-        public class CommandValidator : AbstractValidator<Domain.WatchListItemDetails>
+        public class CommandValidator : AbstractValidator<Command>
         {
             public CommandValidator()
             {
-                RuleFor(itemDetails => itemDetails.examine).NotEmpty();
-                RuleFor(itemDetails => itemDetails.highalch).NotEmpty();
-                RuleFor(itemDetails => itemDetails.icon).NotEmpty();
-                RuleFor(itemDetails => itemDetails.Id).NotEmpty();
-                RuleFor(itemDetails => itemDetails.limit).NotEmpty();
-                RuleFor(itemDetails => itemDetails.lowalch).NotEmpty();
-                RuleFor(itemDetails => itemDetails.members).NotEmpty();
-                RuleFor(itemDetails => itemDetails.name).NotEmpty();
-                RuleFor(itemDetails => itemDetails.value).NotEmpty();
-                RuleFor(itemDetails => itemDetails.mostRecentSnapshot).NotEmpty();
-                RuleFor(itemDetails => itemDetails.mostRecentSnapshot.high).NotEmpty();
-                RuleFor(itemDetails => itemDetails.mostRecentSnapshot.highTime).NotEmpty();
-                RuleFor(itemDetails => itemDetails.mostRecentSnapshot.Id).NotEmpty();
-                RuleFor(itemDetails => itemDetails.mostRecentSnapshot.low).NotEmpty();
-                RuleFor(itemDetails => itemDetails.mostRecentSnapshot.lowTime).NotEmpty();
+                RuleFor(command => command.itemDetails).SetValidator(new WatchListValidator());
             }
         }
 

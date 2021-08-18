@@ -1,5 +1,6 @@
 using System.Threading;
 using System.Threading.Tasks;
+using FluentValidation;
 using MediatR;
 using Persistence;
 
@@ -10,6 +11,14 @@ namespace Application.WatchList
         public class Command : IRequest
         {
             public Domain.WatchListItemDetails itemDetails { get; set; }
+        }
+
+        public class CommandValidator : AbstractValidator<Command>
+        {
+            public CommandValidator()
+            {
+                RuleFor(command => command.itemDetails).SetValidator(new WatchListValidator());
+            }
         }
 
         public class Handler : IRequestHandler<Command>
