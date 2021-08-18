@@ -8,6 +8,8 @@ using Microsoft.OpenApi.Models;
 using Persistence;
 using MediatR;
 using Application.ItemPriceSnapshots;
+using FluentValidation.AspNetCore;
+using Application.WatchList;
 
 namespace OSRSPredator
 {
@@ -26,7 +28,9 @@ namespace OSRSPredator
         public void ConfigureServices(IServiceCollection services)
         {
 
-            services.AddControllers();
+            services.AddControllers().AddFluentValidation(config => {
+                config.RegisterValidatorsFromAssemblyContaining<Post>();
+            });
             services.AddSwaggerGen(c =>
             {
                 c.SwaggerDoc("v1", new OpenApiInfo { Title = "OSRSPredator", Version = "v1" });
@@ -36,7 +40,7 @@ namespace OSRSPredator
                 opt.UseSqlite(Configuration.GetConnectionString("DefaultConnection"));
             });
 
-            services.AddMediatR(typeof(List.Handler).Assembly);
+            services.AddMediatR(typeof(Application.ItemDetails.List.Handler).Assembly);
             services.AddCors(opt => {
                 opt.AddPolicy("CorsPolicy", policy => {
                     policy.AllowAnyMethod().AllowAnyHeader().WithOrigins("http://localhost:3000");
