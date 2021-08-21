@@ -1,4 +1,5 @@
-﻿using Domain;
+﻿using Application.Core;
+using Domain;
 using MediatR;
 using Persistence;
 using System;
@@ -9,12 +10,12 @@ namespace Application.ItemPriceSnapshots
 {
     public class Details
     {
-        public class Query : IRequest<ItemPriceSnapshot>
+        public class Query : IRequest<Result<ItemPriceSnapshot>>
         {
             public String Id { get; set; }
         }
 
-        public class Handler : IRequestHandler<Query, ItemPriceSnapshot>
+        public class Handler : IRequestHandler<Query, Result<ItemPriceSnapshot>>
         {
             private readonly DataContext context;
 
@@ -23,9 +24,11 @@ namespace Application.ItemPriceSnapshots
                 this.context = context;
             }
 
-            public async Task<ItemPriceSnapshot> Handle(Query request, CancellationToken cancellationToken)
+            public async Task<Result<ItemPriceSnapshot>> Handle(Query request, CancellationToken cancellationToken)
             {
-                return await context.ItemPriceSnapshots.FindAsync(request.Id);
+                var itemPriceSnapshot = await context.ItemPriceSnapshots.FindAsync(request.Id);
+
+                return Result<ItemPriceSnapshot>.Success(itemPriceSnapshot);
             }
 
         }
