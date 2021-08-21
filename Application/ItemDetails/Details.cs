@@ -2,17 +2,19 @@
 using Persistence;
 using System.Threading;
 using System.Threading.Tasks;
+using Domain;
+using Application.Core;
 
 namespace Application.ItemDetails
 {
     public class Details
     {
-        public class Query : IRequest<Domain.DefaultItemDetails>
+        public class Query : IRequest<Result<DefaultItemDetails>>
         {
             public long Id { get; set; }
         }
 
-        public class Handler : IRequestHandler<Query, Domain.DefaultItemDetails>
+        public class Handler : IRequestHandler<Query, Result<DefaultItemDetails>>
         {
             private readonly DataContext context;
 
@@ -21,9 +23,9 @@ namespace Application.ItemDetails
                 this.context = context;
             }
 
-            public async Task<Domain.DefaultItemDetails> Handle(Query request, CancellationToken cancellationToken)
+            public async Task<Result<DefaultItemDetails>> Handle(Query request, CancellationToken cancellationToken)
             {
-                return await context.ItemDetails.FindAsync(request.Id);
+                return Result<DefaultItemDetails>.Success(await context.ItemDetails.FindAsync(request.Id));
             }
 
         }

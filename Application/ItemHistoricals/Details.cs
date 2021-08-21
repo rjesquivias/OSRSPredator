@@ -1,4 +1,5 @@
-﻿using Domain;
+﻿using Application.Core;
+using Domain;
 using MediatR;
 using Microsoft.EntityFrameworkCore;
 using Persistence;
@@ -9,12 +10,12 @@ namespace Application.ItemHistoricals
 {
     public class Details
     {
-        public class Query : IRequest<ItemHistorical>
+        public class Query : IRequest<Result<ItemHistorical>>
         {
             public long Id { get; set; }
         }
 
-        public class Handler : IRequestHandler<Query, ItemHistorical>
+        public class Handler : IRequestHandler<Query, Result<ItemHistorical>>
         {
             private readonly DataContext context;
             private readonly IMediator mediator;
@@ -25,9 +26,11 @@ namespace Application.ItemHistoricals
                 this.mediator = mediator;
             }
 
-            public async Task<ItemHistorical> Handle(Query request, CancellationToken cancellationToken)
+            public async Task<Result<ItemHistorical>> Handle(Query request, CancellationToken cancellationToken)
             {
-                return await context.ItemHistoricals.Include(i => i.historical).FirstOrDefaultAsync(i => i.Id == request.Id);
+                var itemHistorical = await context.ItemHistoricals.Include(i => i.historical).FirstOrDefaultAsync(i => i.Id == request.Id);
+
+                return Result<ItemHistorical>.Success(itemHistorical);
             }
         }
     }
