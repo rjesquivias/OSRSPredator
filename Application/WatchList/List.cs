@@ -50,8 +50,6 @@ namespace Application.WatchList
                     return Result<List<WatchListItemDetails>>.Failure(e.Message, StatusCodes.Status500InternalServerError);
                 }
 
-                throw new System.Exception("Random exception called");
-
                 return Result<List<WatchListItemDetails>>.Success(results, StatusCodes.Status200OK);
             }
         }
