@@ -11,7 +11,7 @@ namespace API.Controllers
     public class ItemHistoricalController : BaseApiController
     {
         [HttpGet]
-        public async Task<ActionResult<List<ItemHistorical>>> GetItemHistoricals() => await Mediator.Send(new Application.ItemHistoricals.List.Query());
+        public async Task<ActionResult<List<ItemHistorical>>> GetItemHistoricals() => HandleResult(await Mediator.Send(new Application.ItemHistoricals.List.Query()));
 
         [HttpGet("{id}")]
         public async Task<IActionResult> GetItemHistorical(long id) => HandleResult(await Mediator.Send(new Application.ItemHistoricals.Details.Query { Id = id }));
