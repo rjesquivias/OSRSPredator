@@ -12,12 +12,12 @@ namespace API.Controllers
     public class ItemPriceSnapshotController : BaseApiController
     {
         [HttpGet]
-        public async Task<ActionResult<List<ItemPriceSnapshot>>> GetItemPriceSnapshots() => await Mediator.Send(new Application.ItemPriceSnapshots.List.Query());
+        public async Task<IActionResult> GetItemPriceSnapshots() => HandleResult(await Mediator.Send(new Application.ItemPriceSnapshots.List.Query()));
 
         [HttpGet("{id}")]
         public async Task<IActionResult> GetItemPriceSnapshot(String id) => HandleResult(await Mediator.Send(new Application.ItemPriceSnapshots.Details.Query { Id = id }));
 
         [HttpPost]
-        public async Task<ActionResult> SyncItemPriceSnapshots() => Ok(await Mediator.Send(new Application.ItemPriceSnapshots.Sync.Command()));
+        public async Task<IActionResult> SyncItemPriceSnapshots() => HandleResult(await Mediator.Send(new Application.ItemPriceSnapshots.Sync.Command()));
     }
 }

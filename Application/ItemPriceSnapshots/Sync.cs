@@ -11,16 +11,18 @@ using Application.DTO;
 using System.Linq;
 using System;
 using Microsoft.EntityFrameworkCore;
+using Application.Core;
+using Microsoft.AspNetCore.Http;
 
 namespace Application.ItemPriceSnapshots
 {
     public class Sync
     {
-        public class Command : IRequest
+        public class Command : IRequest<Result<Unit>>
         {
         }
 
-        public class Handler : IRequestHandler<Command>
+        public class Handler : IRequestHandler<Command, Result<Unit>>
         {
             private readonly DataContext context;
 
@@ -35,7 +37,7 @@ namespace Application.ItemPriceSnapshots
                 this.mediator = mediator;
             }
 
-            public async Task<Unit> Handle(Command request, CancellationToken cancellationToken)
+            public async Task<Result<Unit>> Handle(Command request, CancellationToken cancellationToken)
             {
                 using (var httpClient = new HttpClient())
                 {
@@ -108,7 +110,8 @@ namespace Application.ItemPriceSnapshots
                         }
                     }
                 }
-                return Unit.Value;
+
+                return Result<Unit>.Success(Unit.Value, StatusCodes.Status200OK);
             }
         }
     }

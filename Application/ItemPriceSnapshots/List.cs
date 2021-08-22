@@ -1,5 +1,8 @@
-﻿using Domain;
+﻿using Application.Core;
+using Domain;
 using MediatR;
+using Microsoft.AspNetCore.Http;
+using Microsoft.Extensions.Logging;
 using Persistence;
 using System.Collections.Generic;
 using System.Linq;
@@ -10,22 +13,25 @@ namespace Application.ItemPriceSnapshots
 {
     public class List
     {
-        public class Query : IRequest<List<ItemPriceSnapshot>>
+        public class Query : IRequest<Result<List<ItemPriceSnapshot>>>
         {
         }
 
-        public class Handler : IRequestHandler<Query, List<ItemPriceSnapshot>>
+        public class Handler : IRequestHandler<Query, Result<List<ItemPriceSnapshot>>>
         {
             private readonly DataContext context;
+            private readonly ILogger logger;
 
-            public Handler(DataContext context)
+            public Handler(DataContext context, ILogger<Handler> logger)
             {
                 this.context = context;
+                this.logger = logger;
             }
 
-            public async Task<List<ItemPriceSnapshot>> Handle(Query request, CancellationToken cancellationToken)
+            public async Task<Result<List<ItemPriceSnapshot>>> Handle(Query request, CancellationToken cancellationToken)
             {
-                return context.ItemPriceSnapshots.AsEnumerable().OrderBy(snapshot => snapshot, new ItemPriceSnapshotComparer()).ToList();
+                List<ItemPriceSnapshot> results = await Task.Run(() => context.ItemPriceSnapshots.AsEnumerable().OrderBy(snapshot => snapshot, new ItemPriceSnapshotComparer()).ToList());
+                return Result<List<ItemPriceSnapshot>>.Success(results, StatusCodes.Status200OK);
             }
         }
 
