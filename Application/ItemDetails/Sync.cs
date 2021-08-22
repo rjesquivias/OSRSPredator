@@ -6,20 +6,21 @@ using System.Net.Http;
 using Microsoft.Extensions.Logging;
 using Newtonsoft.Json;
 using System.Collections.Generic;
-using System;
 using Microsoft.EntityFrameworkCore;
 using Domain;
 using System.Linq;
+using Application.Core;
+using Microsoft.AspNetCore.Http;
 
 namespace Application.ItemDetails
 {
     public class Sync
     {
-        public class Command : IRequest
+        public class Command : IRequest<Result<Unit>>
         {
         }
 
-        public class Handler : IRequestHandler<Command>
+        public class Handler : IRequestHandler<Command, Result<Unit>>
         {
             private readonly DataContext context;
 
@@ -34,7 +35,7 @@ namespace Application.ItemDetails
                 this.mediator = mediator;
             }
 
-            public async Task<Unit> Handle(Command request, CancellationToken cancellationToken)
+            public async Task<Result<Unit>> Handle(Command request, CancellationToken cancellationToken)
             {
                 using (var httpClient = new HttpClient())
                 {
@@ -60,7 +61,8 @@ namespace Application.ItemDetails
                         }
                     }
                 }
-                return Unit.Value;
+                
+                return Result<Unit>.Success(Unit.Value, StatusCodes.Status200OK);
             }
         }
     }

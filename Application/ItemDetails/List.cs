@@ -3,10 +3,11 @@ using MediatR;
 using Microsoft.EntityFrameworkCore;
 using Persistence;
 using System.Collections.Generic;
-using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 using Domain;
+using Microsoft.Extensions.Logging;
+using Microsoft.AspNetCore.Http;
 
 namespace Application.ItemDetails
 {
@@ -22,17 +23,28 @@ namespace Application.ItemDetails
         public class Handler : IRequestHandler<Query, Result<List<DefaultItemDetails>>>
         {
             private readonly DataContext context;
+            private readonly ILogger<Handler> logger;
 
-            public Handler(DataContext context)
+            public Handler(DataContext context, ILogger<Handler> logger)
             {
                 this.context = context;
+                this.logger = logger;
             }
 
             public async Task<Result<List<DefaultItemDetails>>> Handle(Query request, CancellationToken cancellationToken)
             {
-                var itemDetails = await Task.Run(() => context.ItemDetails.Include(item => item.mostRecentSnapshot).ToList().GetRange((request.page - 1) * request.pageSize, request.pageSize));
+                Dictionary<string, string[]> errors = PaginationValidator.Validate(request.pageSize, request.page);
+                if(errors.Count != 0)
+                {
+                    logger.LogInformation($"Request failed with the PaginationValidator");
+                    return Result<List<DefaultItemDetails>>.Failure(errors, StatusCodes.Status400BadRequest);
+                }
 
-                return Result<List<Domain.DefaultItemDetails>>.Success(itemDetails);
+                List<Domain.DefaultItemDetails> results = await context.ItemDetails.Include(item => item.mostRecentSnapshot).ToListAsync();
+                if(results.Count > request.pageSize)
+                    results = results.GetRange((request.page - 1) * request.pageSize, request.pageSize);
+
+                return Result<List<DefaultItemDetails>>.Success(results, StatusCodes.Status200OK);
             }
         }
     }

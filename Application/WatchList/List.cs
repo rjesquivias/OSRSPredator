@@ -42,13 +42,8 @@ namespace Application.WatchList
                 }
 
                 List<Domain.WatchListItemDetails> results = await context.WatchList.Include(item => item.mostRecentSnapshot).ToListAsync();
-                try {
-                    if(results.Count > request.pageSize)
-                        results = results.GetRange((request.page - 1) * request.pageSize, request.pageSize);
-                } catch(System.Exception e) {
-                    logger.LogError(e, e.Message);
-                    return Result<List<WatchListItemDetails>>.Failure(e.Message, StatusCodes.Status500InternalServerError);
-                }
+                if(results.Count > request.pageSize)
+                    results = results.GetRange((request.page - 1) * request.pageSize, request.pageSize);
 
                 return Result<List<WatchListItemDetails>>.Success(results, StatusCodes.Status200OK);
             }

@@ -1,6 +1,4 @@
-﻿using Domain;
-using Microsoft.AspNetCore.Mvc;
-using System.Collections.Generic;
+﻿using Microsoft.AspNetCore.Mvc;
 using System.Threading.Tasks;
 using System;
 using OSRSPredator.Controllers;

@@ -15,6 +15,6 @@ namespace API.Controllers
         public async Task<IActionResult> GetItemDetail(long id) => HandleResult(await Mediator.Send(new Application.ItemDetails.Details.Query { Id = id }));
 
         [HttpPost]
-        public async Task<ActionResult> SyncItemDetails() => Ok(await Mediator.Send(new Application.ItemDetails.Sync.Command()));
+        public async Task<ActionResult> SyncItemDetails() => HandleResult(await Mediator.Send(new Application.ItemDetails.Sync.Command()));
     }
 }
