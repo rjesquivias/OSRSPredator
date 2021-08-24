@@ -15,10 +15,13 @@ public class WatchListValidator : AbstractValidator<WatchListItemDetails>
         RuleFor(itemDetails => itemDetails.name).NotEmpty();
         RuleFor(itemDetails => itemDetails.value).NotEmpty();
         RuleFor(itemDetails => itemDetails.mostRecentSnapshot).NotEmpty();
-        RuleFor(itemDetails => itemDetails.mostRecentSnapshot.high).NotEmpty();
-        RuleFor(itemDetails => itemDetails.mostRecentSnapshot.highTime).NotEmpty();
-        RuleFor(itemDetails => itemDetails.mostRecentSnapshot.Id).NotEmpty();
-        RuleFor(itemDetails => itemDetails.mostRecentSnapshot.low).NotEmpty();
-        RuleFor(itemDetails => itemDetails.mostRecentSnapshot.lowTime).NotEmpty();
+        When(itemDetails => itemDetails.mostRecentSnapshot != null, () => {
+            RuleFor(itemDetails => itemDetails.mostRecentSnapshot).NotEmpty();
+            RuleFor(itemDetails => itemDetails.mostRecentSnapshot.high).NotEmpty();
+            RuleFor(itemDetails => itemDetails.mostRecentSnapshot.highTime).NotEmpty();
+            RuleFor(itemDetails => itemDetails.mostRecentSnapshot.Id).NotEmpty();
+            RuleFor(itemDetails => itemDetails.mostRecentSnapshot.low).NotEmpty();
+            RuleFor(itemDetails => itemDetails.mostRecentSnapshot.lowTime).NotEmpty();
+        });
     }
 }
