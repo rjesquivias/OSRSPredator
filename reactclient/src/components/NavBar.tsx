@@ -30,6 +30,7 @@ const NavBar = () => {
                     active={itemStore.navState === itemStore.WATCHLIST}
                     onClick={handleNavClick}
                 />
+                <Menu.Item as={NavLink} to='/errors' name='Errors' />
             </Menu>
             
             <div className="right menu">
