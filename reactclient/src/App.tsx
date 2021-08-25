@@ -8,6 +8,8 @@ import { toast, ToastContainer } from "react-toastify";
 import axios, { AxiosError } from "axios";
 import NotFound from "./errors/NotFound";
 import { history } from ".";
+import { store } from "./stores/store";
+import ServerError from "./errors/ServerError";
 
 axios.interceptors.response.use(async response => {
     return response
@@ -34,7 +36,8 @@ axios.interceptors.response.use(async response => {
         history.push('/not-found');
         break;
       case 500: 
-        toast.error('server error');
+        store.commonStore.setServerError(data);
+        history.push('/server-error');
         break;
     }
 
@@ -54,6 +57,7 @@ function App() {
           <Route exact path='/itemDashboard/:id' component={AnalysisDetails} />
           <Route exact path='/watchList' component={AnalysisDashboard} key={location.key} />
           <Route exact path='/errors' component={TestErrors} />
+          <Route exact path='/server-error' component={ServerError} />
           <Route component={NotFound} />
         </Switch>
     </div>
