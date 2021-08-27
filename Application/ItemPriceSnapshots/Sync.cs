@@ -7,7 +7,7 @@ using Microsoft.Extensions.Logging;
 using Newtonsoft.Json;
 using Domain;
 using System.Collections.Generic;
-using Application.DTO;
+using Application.DTOs;
 using System.Linq;
 using System;
 using Microsoft.EntityFrameworkCore;
