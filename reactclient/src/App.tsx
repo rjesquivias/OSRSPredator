@@ -15,6 +15,7 @@ import HomePage from "./components/Home/HomePage";
 import { Container } from "semantic-ui-react";
 import { useEffect } from "react";
 import LoadingComponent from "./components/LoadingComponent";
+import ModalContainer from "./components/Modals/ModalContainer";
 
 axios.interceptors.request.use(config => {
   const token = store.commonStore.token;
@@ -75,7 +76,8 @@ function App() {
 
   return (
     <>
-    <ToastContainer position='bottom-right' hideProgressBar />
+      <ToastContainer position='bottom-right' hideProgressBar />
+      <ModalContainer />
       <Route exact path='/' component={HomePage} />
       <Route
         path={'/(.+)'}

@@ -22,6 +22,7 @@ export default class UserStore {
             store.commonStore.setToken(user.token);
             runInAction(() => this.user = user);
             history.push('/itemDashboard');
+            store.modalStore.closeModal();
         } catch(error) {
             throw error;
         }
