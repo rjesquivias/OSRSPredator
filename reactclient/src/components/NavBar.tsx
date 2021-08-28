@@ -1,11 +1,11 @@
 import { observer } from "mobx-react-lite";
-import { Menu } from "semantic-ui-react";
+import { Menu, Image, Dropdown, DropdownMenu } from "semantic-ui-react";
 import { useStore } from "../stores/store";
-import { NavLink } from "react-router-dom";
+import { Link, NavLink } from "react-router-dom";
 
 const NavBar = () => {
 
-    const { itemStore } = useStore();
+    const { itemStore, userStore: {user, logout} } = useStore();
 
     const handleNavClick = async (e: any, { name }: any) => {
         itemStore.setNavState(name);
@@ -33,17 +33,26 @@ const NavBar = () => {
                 <Menu.Item as={NavLink} to='/errors' name='Errors' />
             </Menu>
             
-            <div className="right menu">
-                <div className="item">
+            <Menu pointing secondary className="right">
+                <Menu.Item>
                     <i className="large icon bell outline"/>
-                </div>
-                <div className="item">
+                </Menu.Item>
+                <Menu.Item>
                     <i className="large icon mail outline"/>
-                </div>
-                <div className="item">
+                </Menu.Item>
+                <Menu.Item>
                     <i className="large icon home"/>
-                </div>
-            </div>
+                </Menu.Item>
+                <Menu.Item position='right'>
+                    <Image src={user?.image || '/logo192.png'} avatar spaced='right'></Image>
+                    <Dropdown pointing='top left' text={user?.displayName}>
+                        <DropdownMenu>
+                            <Dropdown.Item as={Link} to={`/profile/${user?.username}`} text='My Profile' icon='user' />
+                            <Dropdown.Item onClick={logout} text='Logout' icon='power' />
+                        </DropdownMenu> 
+                    </Dropdown>
+                </Menu.Item>
+            </Menu>
         </Menu>      
     )
 }

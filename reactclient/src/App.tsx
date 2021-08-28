@@ -8,11 +8,19 @@ import { toast, ToastContainer } from "react-toastify";
 import axios, { AxiosError } from "axios";
 import NotFound from "./errors/NotFound";
 import { history } from ".";
-import { store } from "./stores/store";
+import { store, useStore } from "./stores/store";
 import ServerError from "./errors/ServerError";
 import LoginForm from "./components/Users/LoginForm";
 import HomePage from "./components/Home/HomePage";
 import { Container } from "semantic-ui-react";
+import { useEffect } from "react";
+import LoadingComponent from "./components/LoadingComponent";
+
+axios.interceptors.request.use(config => {
+  const token = store.commonStore.token;
+  if(token) config.headers.Authorization = `Bearer ${token}`;
+  return config;
+})
 
 axios.interceptors.response.use(async response => {
     return response
@@ -53,6 +61,17 @@ axios.interceptors.response.use(async response => {
 
 function App() {
   const location = useLocation();
+  const {commonStore, userStore} = useStore();
+
+  useEffect(() => {
+    if(commonStore.token) {
+      userStore.getUser().finally(() => commonStore.setAppLoaded());
+    } else {
+      commonStore.setAppLoaded();
+    }
+  }, [commonStore, userStore])
+
+  if(!commonStore.appLoaded) return <LoadingComponent isActive={true}/>
 
   return (
     <>

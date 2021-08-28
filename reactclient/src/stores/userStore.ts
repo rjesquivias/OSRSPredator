@@ -33,4 +33,14 @@ export default class UserStore {
         this.user = null;
         history.push('/');
     }
+
+    getUser = async () => {
+        try {
+            const response = await axios.get("https://localhost:5001/api/Account");
+            const user = response.data;
+            runInAction(() => this.user = user);
+        } catch(error) {
+            console.log(error);
+        }
+    }
 }
