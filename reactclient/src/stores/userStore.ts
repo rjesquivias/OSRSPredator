@@ -44,4 +44,17 @@ export default class UserStore {
             console.log(error);
         }
     }
+
+    register = async (creds: UserFormValues) => {
+        try{
+            const response = await axios.post("https://localhost:5001/api/Account/register", creds);
+            const user = response.data;
+            store.commonStore.setToken(user.token);
+            runInAction(() => this.user = user);
+            history.push('/itemDashboard');
+            store.modalStore.closeModal();
+        } catch(error) {
+            throw error;
+        }
+    }
 }
