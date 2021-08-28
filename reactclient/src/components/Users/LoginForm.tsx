@@ -1,8 +1,12 @@
 import { Form, Formik } from "formik";
+import { observer } from "mobx-react-lite";
 import { Button, Container, Grid } from "semantic-ui-react";
+import { useStore } from "../../stores/store";
 import TextInput from "../TextInput";
 
-export default function LoginForm() {
+export default observer(function LoginForm() {
+    const {userStore} = useStore();
+
     return (
         <Container>
             <Grid columns={3}>
@@ -12,13 +16,13 @@ export default function LoginForm() {
                 <Grid.Column>
                     <Formik 
                     initialValues={{email: '', password: ''}}
-                    onSubmit={values => console.log(values)}
+                    onSubmit={values => userStore.login(values)}
                     >
-                        {({handleSubmit}) => (
+                        {({handleSubmit, isSubmitting}) => (
                             <Form className='ui form' onSubmit={handleSubmit} autoComplete='off'>
                                 <TextInput name='email' placeholder='Email' />
                                 <TextInput name='password' placeholder='Password' type='password'/>
-                                <Button positive content='Login' type='submit' fluid />
+                                <Button loading={isSubmitting} positive content='Login' type='submit' fluid />
                             </Form>
                         )}
                     </Formik>
@@ -29,4 +33,4 @@ export default function LoginForm() {
             </Grid>
         </Container>
     )
-}
+})
