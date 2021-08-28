@@ -10,6 +10,9 @@ import NotFound from "./errors/NotFound";
 import { history } from ".";
 import { store } from "./stores/store";
 import ServerError from "./errors/ServerError";
+import LoginForm from "./components/Users/LoginForm";
+import HomePage from "./components/Home/HomePage";
+import { Container } from "semantic-ui-react";
 
 axios.interceptors.response.use(async response => {
     return response
@@ -54,17 +57,27 @@ function App() {
   return (
     <>
     <ToastContainer position='bottom-right' hideProgressBar />
-    <div className="container">
-      <NavBar />
-        <Switch>
-          <Route exact path='/itemDashboard' component={AnalysisDashboard} key={location.key} />
-          <Route exact path='/itemDashboard/:id' component={AnalysisDetails} />
-          <Route exact path='/watchList' component={AnalysisDashboard} key={location.key} />
-          <Route exact path='/errors' component={TestErrors} />
-          <Route exact path='/server-error' component={ServerError} />
-          <Route component={NotFound} />
-        </Switch>
-    </div>
+      <Route exact path='/' component={HomePage} />
+      <Route
+        path={'/(.+)'}
+        render={() => (
+          <> 
+            <NavBar />
+            <Container style={{ marginTop: '7em'}}>
+              <Switch>
+                <Route exact path='/itemDashboard' component={AnalysisDashboard} key={location.key} />
+                <Route exact path='/itemDashboard/:id' component={AnalysisDetails} />
+                <Route exact path='/watchList' component={AnalysisDashboard} key={location.key} />
+                <Route exact path='/errors' component={TestErrors} />
+                <Route exact path='/server-error' component={ServerError} />
+                <Route exact path='/login' component={LoginForm} />
+                
+                <Route component={NotFound} />
+              </Switch>
+            </Container>
+          </>
+        )}
+      />
     </>
   );
 }

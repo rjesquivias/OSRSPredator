@@ -13,13 +13,13 @@ const NavBar = () => {
     }
 
     return (
-        <div className="ui secondary pointing menu massive">
-            <div className="item">
+        <Menu>
+            <Menu.Item as={NavLink} to={"/"}>
                 <img style={{width: '30px', height: 'auto'}} src="/logo512.png"/>
                 <div style={{margin: '10px'}}>OSRSPredator</div>
-            </div>
+            </Menu.Item>
 
-            <Menu pointing secondary className="right menu">
+            <Menu pointing secondary className="right">
                 <Menu.Item as={NavLink} to={"/itemDashboard"}
                     name={itemStore.ALL_ITEMS}
                     active={itemStore.navState === itemStore.ALL_ITEMS}
@@ -44,7 +44,7 @@ const NavBar = () => {
                     <i className="large icon home"/>
                 </div>
             </div>
-        </div>      
+        </Menu>      
     )
 }
 
