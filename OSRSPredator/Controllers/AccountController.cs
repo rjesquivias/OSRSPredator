@@ -43,7 +43,7 @@ namespace OSRSPredator.Controllers
         }
 
         [AllowAnonymous]
-        [HttpPost("register")]
+        [HttpPost("register")] 
         public async Task<ActionResult<UserDto>> Register(RegisterDto registerDto)
         {
             if(await userManager.Users.AnyAsync(x => x.Email == registerDto.Email))
@@ -51,17 +51,12 @@ namespace OSRSPredator.Controllers
                 ModelState.AddModelError("email", "Email taken");
                 return ValidationProblem();
             }
-            if(await userManager.Users.AnyAsync(x => x.UserName == registerDto.Username))
-            {
-                ModelState.AddModelError("username", "Username taken");
-                return ValidationProblem();
-            }
 
             var user = new AppUser
             {
-                DisplayName = registerDto.DisplayName,
+                DisplayName = registerDto.Email,
                 Email = registerDto.Email,
-                UserName = registerDto.Username
+                UserName = registerDto.Email
             };
 
             var result = await userManager.CreateAsync(user, registerDto.Password);
@@ -85,10 +80,9 @@ namespace OSRSPredator.Controllers
         {
             return new UserDto
                 {
-                    DisplayName = user.DisplayName,
                     Image = null,
                     Token = tokenService.CreateToken(user),
-                    Username = user.UserName
+                    Username = user.DisplayName
                 };
         }
     }

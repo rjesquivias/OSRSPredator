@@ -15,8 +15,6 @@ export default observer(function RegisterForm() {
         onSubmit={(values, {setErrors}) => userStore.register(values).catch(error => 
             setErrors({error}))}
         validationSchema={Yup.object({
-            displayName: Yup.string().required(),
-            username: Yup.string().required(),
             email: Yup.string().required().email(),
             password: Yup.string().required(),
         })}
@@ -24,8 +22,6 @@ export default observer(function RegisterForm() {
             {({handleSubmit, isSubmitting, errors, isValid, dirty}) => (
                 <Form className='ui form error' onSubmit={handleSubmit} autoComplete='off'>
                     <Header as='h2' content='Sign up to OSRSPredator' color='teal' textAlign='center' />
-                    <TextInput name='displayName' placeholder='Display Name' />
-                    <TextInput name='username' placeholder='Username' />
                     <TextInput name='email' placeholder='Email' />
                     <TextInput name='password' placeholder='Password' type='password'/>
                     <ErrorMessage 
