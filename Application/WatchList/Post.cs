@@ -2,9 +2,12 @@ using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 using Application.Core;
+using Application.Interfaces;
+using Domain;
 using FluentValidation;
 using MediatR;
 using Microsoft.AspNetCore.Http;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
 using Persistence;
 
@@ -14,7 +17,7 @@ namespace Application.WatchList
     {
         public class Command : IRequest<Result<Unit>>
         {
-            public Domain.WatchListItemDetails itemDetails { get; set; }
+            public Domain.ItemDetails itemDetails { get; set; }
         }
 
         public class CommandValidator : AbstractValidator<Command>
@@ -28,37 +31,37 @@ namespace Application.WatchList
         public class Handler : IRequestHandler<Command, Result<Unit>>
         {
             private readonly DataContext context;
-
-            private readonly IMediator mediator;
-
             private readonly ILogger logger;
+            private readonly IUsernameAccessor usernameAccessor;
 
-            public Handler(DataContext context, IMediator mediator, ILogger<Handler> logger)
+            public Handler(DataContext context, ILogger<Handler> logger, IUsernameAccessor usernameAccessor)
             {
                 this.context = context;
-                this.mediator = mediator;
                 this.logger = logger;
+                this.usernameAccessor = usernameAccessor;
             }
 
             public async Task<Result<Unit>> Handle(Command request, CancellationToken cancellationToken)
             {
-                if(context.WatchList.Any(item => item.Id == request.itemDetails.Id)) 
+                var user = await context.Users.FirstOrDefaultAsync(x => x.UserName == usernameAccessor.GetUsername());
+                if(context.UserWatchList.Any(item => item.AppUserId == user.Id && item.ItemDetailsId == request.itemDetails.Id)) 
                 {
                     logger.LogInformation($"WatchListItemDetails with the id of {request.itemDetails.Id} already exists within the watchlist");
                     return Result<Unit>.Success(Unit.Value, StatusCodes.Status200OK);
                 }
 
-                var mostRecentSnapshot = await context.ItemPriceSnapshots.FindAsync(request.itemDetails.mostRecentSnapshot.Id);
-                if(mostRecentSnapshot == null) 
+                var userWatchListItem = new UserWatchList
                 {
-                    logger.LogInformation($"WatchListItemDetails with the id of {request.itemDetails.Id} does not contain any snapshot data");
-                    logger.LogInformation($"ItemPriceSnapshot with the id of {request.itemDetails.mostRecentSnapshot.Id} does not exist within the ItemPriceSnapshots table");
-                }
+                    AppUser = user,
+                    ItemDetails = request.itemDetails,
+                    MostRecentSnapshot = await GetMostRecentSnapshotByItemId(context, request.itemDetails.Id)
+                };
 
-                request.itemDetails.mostRecentSnapshot = mostRecentSnapshot;
-                await context.WatchList.AddAsync(request.itemDetails);
+                request.itemDetails.UserWatchList.Add(userWatchListItem);
+                context.UserWatchList.Add(userWatchListItem);
+                context.ItemDetails.Attach(request.itemDetails);
+
                 var result = await context.SaveChangesAsync() > 0;
-
                 if(!result)
                 {
                     logger.LogInformation($"WatchListItemDetails with the id of {request.itemDetails.Id} was not successfully added to the database");
@@ -66,6 +69,26 @@ namespace Application.WatchList
                 } 
 
                 return Result<Unit>.Success(Unit.Value, StatusCodes.Status200OK);
+            }
+
+            public async Task<ItemPriceSnapshot> GetMostRecentSnapshotByItemId(DataContext context, long itemDetailsId)
+            {
+                var itemDetailsDBEntry = await context.ItemDetails.FindAsync(itemDetailsId);
+                context.Entry(itemDetailsDBEntry).State = EntityState.Detached;
+                var itemHistorical = await context.ItemHistoricals.Include(itemHistoricals => itemHistoricals.historical).FirstOrDefaultAsync(x => x.Id == itemDetailsId);
+                if (itemHistorical != null && itemHistorical.historical != null)
+                {
+                    itemHistorical.historical.Sort((ItemPriceSnapshot a, ItemPriceSnapshot b) =>
+                    {
+                        var A = a.highTime > a.lowTime ? a.highTime : a.lowTime;
+                        var B = b.highTime > b.lowTime ? b.highTime : b.lowTime;
+                        return A.CompareTo(B);
+                    });
+
+                    return itemHistorical.historical.First();
+                }
+
+                return null;
             }
         }
     }

@@ -12,12 +12,12 @@ namespace Application.ItemDetails
 {
     public class Details
     {
-        public class Query : IRequest<Result<DefaultItemDetails>>
+        public class Query : IRequest<Result<Domain.ItemDetails>>
         {
             public long Id { get; set; }
         }
 
-        public class Handler : IRequestHandler<Query, Result<DefaultItemDetails>>
+        public class Handler : IRequestHandler<Query, Result<Domain.ItemDetails>>
         {
             private readonly DataContext context;
             private readonly ILogger<Handler> logger;
@@ -28,13 +28,13 @@ namespace Application.ItemDetails
                 this.logger = logger;
             }
 
-            public async Task<Result<DefaultItemDetails>> Handle(Query request, CancellationToken cancellationToken)
+            public async Task<Result<Domain.ItemDetails>> Handle(Query request, CancellationToken cancellationToken)
             {
                 Dictionary<string, string[]> errors = IdValidator.Validate(request.Id);
                 if(errors.Count != 0)
                 {
                     logger.LogInformation($"Request failed with the IdValidator");
-                    return Result<DefaultItemDetails>.Failure(errors, StatusCodes.Status400BadRequest);
+                    return Result<Domain.ItemDetails>.Failure(errors, StatusCodes.Status400BadRequest);
                 }
 
                 var entity = await context.ItemDetails.FindAsync(request.Id);
@@ -44,7 +44,7 @@ namespace Application.ItemDetails
                     return null;
                 } 
 
-                return Result<DefaultItemDetails>.Success(entity);
+                return Result<Domain.ItemDetails>.Success(entity);
             }
 
         }

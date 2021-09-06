@@ -13,9 +13,9 @@ namespace API.Controllers
         public async Task<IActionResult> GetItemDetails(int pageSize = 20, int page = 1) => HandleResult(await Mediator.Send(new Application.WatchList.List.Query{ pageSize = pageSize, page = page }));
 
         [HttpPost]
-        public async Task<IActionResult> CreateItemDetail(WatchListItemDetails itemDetails) => HandleResult(await Mediator.Send(new Application.WatchList.Post.Command{ itemDetails = itemDetails }));
+        public async Task<IActionResult> CreateItemDetail(ItemDetails itemDetails) => HandleResult(await Mediator.Send(new Application.WatchList.Post.Command{ itemDetails = itemDetails }));
 
         [HttpDelete]
-        public async Task<IActionResult> DeleteItemDetail(WatchListItemDetails itemDetails) => HandleResult(await Mediator.Send(new Application.WatchList.Delete.Command{ itemDetails = itemDetails }));
+        public async Task<IActionResult> DeleteItemDetail(ItemDetails itemDetails) => HandleResult(await Mediator.Send(new Application.WatchList.Delete.Command{ itemDetails = itemDetails }));
     }
 }

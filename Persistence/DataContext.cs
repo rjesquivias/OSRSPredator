@@ -10,12 +10,29 @@ namespace Persistence
         {
         }
 
-        public DbSet<DefaultItemDetails> ItemDetails { get; set; }
-
-        public DbSet<WatchListItemDetails> WatchList { get; set; }
+        public DbSet<ItemDetails> ItemDetails { get; set; }
 
         public DbSet<ItemHistorical> ItemHistoricals { get; set; }
 
         public DbSet<ItemPriceSnapshot> ItemPriceSnapshots { get; set; }
+
+        public DbSet<UserWatchList> UserWatchList { get; set; }
+
+        protected override void OnModelCreating(ModelBuilder builder)
+        {
+            base.OnModelCreating(builder);
+
+            builder.Entity<UserWatchList>(x => x.HasKey(aa => new { aa.AppUserId, aa.ItemDetailsId}));
+
+            builder.Entity<UserWatchList>()
+                .HasOne(u => u.AppUser)
+                .WithMany(a => a.UserWatchList)
+                .HasForeignKey(aa => aa.AppUserId);
+
+            builder.Entity<UserWatchList>()
+                .HasOne(u => u.ItemDetails)
+                .WithMany(a => a.UserWatchList)
+                .HasForeignKey(aa => aa.ItemDetailsId);
+        }
     }
 }

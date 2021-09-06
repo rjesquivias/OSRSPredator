@@ -1,7 +1,7 @@
 using FluentValidation;
 using Domain;
 
-public class WatchListValidator : AbstractValidator<WatchListItemDetails>
+public class WatchListValidator : AbstractValidator<ItemDetails>
 {
     public WatchListValidator()
     {
@@ -14,14 +14,5 @@ public class WatchListValidator : AbstractValidator<WatchListItemDetails>
         RuleFor(itemDetails => itemDetails.members).NotEmpty();
         RuleFor(itemDetails => itemDetails.name).NotEmpty();
         RuleFor(itemDetails => itemDetails.value).NotEmpty();
-        RuleFor(itemDetails => itemDetails.mostRecentSnapshot).NotEmpty();
-        When(itemDetails => itemDetails.mostRecentSnapshot != null, () => {
-            RuleFor(itemDetails => itemDetails.mostRecentSnapshot).NotEmpty();
-            RuleFor(itemDetails => itemDetails.mostRecentSnapshot.high).NotEmpty();
-            RuleFor(itemDetails => itemDetails.mostRecentSnapshot.highTime).NotEmpty();
-            RuleFor(itemDetails => itemDetails.mostRecentSnapshot.Id).NotEmpty();
-            RuleFor(itemDetails => itemDetails.mostRecentSnapshot.low).NotEmpty();
-            RuleFor(itemDetails => itemDetails.mostRecentSnapshot.lowTime).NotEmpty();
-        });
     }
 }

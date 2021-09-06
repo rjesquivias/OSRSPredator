@@ -1,9 +1,10 @@
-﻿using System.ComponentModel.DataAnnotations;
+﻿using System.Collections.Generic;
+using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 
 namespace Domain
 {
-    public class ItemDetailsBase
+    public class ItemDetails
     {
         [Required]
         [MaxLength(200)]
@@ -35,8 +36,8 @@ namespace Domain
         [MaxLength(50)]
         public string name { get; set; }
 
-        public ItemPriceSnapshot mostRecentSnapshot { get; set; }
-
         public long prediction { get; set; }
+
+        public ICollection<UserWatchList> UserWatchList { get; set; } = new List<UserWatchList>();
     }
 }

@@ -1,9 +1,11 @@
 using System.Threading;
 using System.Threading.Tasks;
 using Application.Core;
+using Application.Interfaces;
 using FluentValidation;
 using MediatR;
 using Microsoft.AspNetCore.Http;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
 using Persistence;
 
@@ -13,7 +15,7 @@ namespace Application.WatchList
     {
         public class Command : IRequest<Result<Unit>>
         {
-            public Domain.WatchListItemDetails itemDetails { get; set; }
+            public Domain.ItemDetails itemDetails { get; set; }
         }
 
         public class CommandValidator : AbstractValidator<Command>
@@ -32,16 +34,21 @@ namespace Application.WatchList
 
             private readonly ILogger logger;
 
-            public Handler(DataContext context, IMediator mediator, ILogger<Handler> logger)
+            private readonly IUsernameAccessor usernameAccessor;
+
+            public Handler(DataContext context, IMediator mediator, ILogger<Handler> logger, IUsernameAccessor usernameAccessor)
             {
                 this.context = context;
                 this.mediator = mediator;
                 this.logger = logger;
+                this.usernameAccessor = usernameAccessor;
             }
 
             public async Task<Result<Unit>> Handle(Command request, CancellationToken cancellationToken)
-            {             
-                var entity = await context.WatchList.FindAsync(request.itemDetails.Id);
+            {          
+                var user = await context.Users.FirstOrDefaultAsync(x => x.UserName == usernameAccessor.GetUsername());
+
+                var entity = await context.UserWatchList.FindAsync(user.Id, request.itemDetails.Id);
                 if(entity == null)
                 {
                     logger.LogInformation($"WatchListItemDetails with the id of {request.itemDetails.Id} was not found");

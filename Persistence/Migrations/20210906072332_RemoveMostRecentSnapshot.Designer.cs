@@ -2,15 +2,17 @@
 using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using Persistence;
 
 namespace Persistence.Migrations
 {
     [DbContext(typeof(DataContext))]
-    partial class DataContextModelSnapshot : ModelSnapshot
+    [Migration("20210906072332_RemoveMostRecentSnapshot")]
+    partial class RemoveMostRecentSnapshot
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -83,7 +85,7 @@ namespace Persistence.Migrations
                     b.ToTable("AspNetUsers");
                 });
 
-            modelBuilder.Entity("Domain.ItemDetails", b =>
+            modelBuilder.Entity("Domain.DefaultItemDetails", b =>
                 {
                     b.Property<long>("Id")
                         .HasColumnType("INTEGER");
@@ -176,13 +178,61 @@ namespace Persistence.Migrations
                     b.Property<string>("MostRecentSnapshotId")
                         .HasColumnType("TEXT");
 
+                    b.Property<long?>("WatchListItemDetailsId")
+                        .HasColumnType("INTEGER");
+
                     b.HasKey("AppUserId", "ItemDetailsId");
 
                     b.HasIndex("ItemDetailsId");
 
                     b.HasIndex("MostRecentSnapshotId");
 
+                    b.HasIndex("WatchListItemDetailsId");
+
                     b.ToTable("UserWatchList");
+                });
+
+            modelBuilder.Entity("Domain.WatchListItemDetails", b =>
+                {
+                    b.Property<long>("Id")
+                        .HasColumnType("INTEGER");
+
+                    b.Property<string>("examine")
+                        .IsRequired()
+                        .HasMaxLength(200)
+                        .HasColumnType("TEXT");
+
+                    b.Property<long>("highalch")
+                        .HasColumnType("INTEGER");
+
+                    b.Property<string>("icon")
+                        .IsRequired()
+                        .HasMaxLength(50)
+                        .HasColumnType("TEXT");
+
+                    b.Property<long>("limit")
+                        .HasColumnType("INTEGER");
+
+                    b.Property<long>("lowalch")
+                        .HasColumnType("INTEGER");
+
+                    b.Property<bool>("members")
+                        .HasColumnType("INTEGER");
+
+                    b.Property<string>("name")
+                        .IsRequired()
+                        .HasMaxLength(50)
+                        .HasColumnType("TEXT");
+
+                    b.Property<long>("prediction")
+                        .HasColumnType("INTEGER");
+
+                    b.Property<long>("value")
+                        .HasColumnType("INTEGER");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("WatchList");
                 });
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityRole", b =>
@@ -328,7 +378,7 @@ namespace Persistence.Migrations
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.HasOne("Domain.ItemDetails", "ItemDetails")
+                    b.HasOne("Domain.DefaultItemDetails", "ItemDetails")
                         .WithMany("UserWatchList")
                         .HasForeignKey("ItemDetailsId")
                         .OnDelete(DeleteBehavior.Cascade)
@@ -337,6 +387,10 @@ namespace Persistence.Migrations
                     b.HasOne("Domain.ItemPriceSnapshot", "MostRecentSnapshot")
                         .WithMany()
                         .HasForeignKey("MostRecentSnapshotId");
+
+                    b.HasOne("Domain.WatchListItemDetails", null)
+                        .WithMany("UserWatchList")
+                        .HasForeignKey("WatchListItemDetailsId");
 
                     b.Navigation("AppUser");
 
@@ -401,7 +455,7 @@ namespace Persistence.Migrations
                     b.Navigation("UserWatchList");
                 });
 
-            modelBuilder.Entity("Domain.ItemDetails", b =>
+            modelBuilder.Entity("Domain.DefaultItemDetails", b =>
                 {
                     b.Navigation("UserWatchList");
                 });
@@ -409,6 +463,11 @@ namespace Persistence.Migrations
             modelBuilder.Entity("Domain.ItemHistorical", b =>
                 {
                     b.Navigation("historical");
+                });
+
+            modelBuilder.Entity("Domain.WatchListItemDetails", b =>
+                {
+                    b.Navigation("UserWatchList");
                 });
 #pragma warning restore 612, 618
         }

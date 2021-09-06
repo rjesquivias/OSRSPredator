@@ -42,7 +42,7 @@ namespace Application.ItemDetails
                     using (var response = await httpClient.GetAsync("https://prices.runescape.wiki/api/v1/osrs/mapping"))
                     {
                         string data = await response.Content.ReadAsStringAsync();
-                        List<Domain.DefaultItemDetails> itemDetails = JsonConvert.DeserializeObject<List<Domain.DefaultItemDetails>>(data);
+                        List<Domain.ItemDetails> itemDetails = JsonConvert.DeserializeObject<List<Domain.ItemDetails>>(data);
 
                         foreach (var item in itemDetails) {
                             var itemDetailsDBEntry = await context.ItemDetails.FindAsync(item.Id);
@@ -55,7 +55,6 @@ namespace Application.ItemDetails
                                     return A.CompareTo(B);
                                 });
 
-                                itemDetailsDBEntry.mostRecentSnapshot = itemHistorical.historical.First();
                                 context.SaveChanges();
                             }
                         }

@@ -19,6 +19,8 @@ using System.Text;
 using System;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc.Authorization;
+using Application.Interfaces;
+using Infrastructure.Security;
 
 namespace OSRSPredator
 {
@@ -81,7 +83,13 @@ namespace OSRSPredator
                 });
             });
 
-            services.AddIdentityCore<AppUser>()
+            services.AddIdentityCore<AppUser>(options => {
+                options.Password.RequiredLength = 8;
+                options.Password.RequireNonAlphanumeric = false;
+                options.Password.RequireDigit = false;
+                options.Password.RequireUppercase = false;
+                options.Password.RequireLowercase = false;
+            })
             .AddEntityFrameworkStores<DataContext>()
             .AddSignInManager<SignInManager<AppUser>>();
 
@@ -98,6 +106,7 @@ namespace OSRSPredator
                     };
                 });
             services.AddScoped<TokenService>();
+            services.AddScoped<IUsernameAccessor, UsernameAccessor>();
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
