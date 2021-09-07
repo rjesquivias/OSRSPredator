@@ -21,6 +21,8 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc.Authorization;
 using Application.Interfaces;
 using Infrastructure.Security;
+using AutoMapper;
+using Application.Core.Mapping;
 
 namespace OSRSPredator
 {
@@ -107,6 +109,13 @@ namespace OSRSPredator
                 });
             services.AddScoped<TokenService>();
             services.AddScoped<IUsernameAccessor, UsernameAccessor>();
+
+            var config = new MapperConfiguration(cfg => {
+                cfg.AddProfile<MappingProfiles>();
+            });
+
+            var mapper = config.CreateMapper();
+            services.AddSingleton(mapper);
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
