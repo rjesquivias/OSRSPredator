@@ -2,6 +2,7 @@ using Microsoft.AspNetCore.Mvc;
 using System.Threading.Tasks;
 using Domain;
 using OSRSPredator.Controllers;
+using Application.Core;
 
 namespace API.Controllers
 {
@@ -10,7 +11,7 @@ namespace API.Controllers
     public class WatchListController : BaseApiController
     {
         [HttpGet]
-        public async Task<IActionResult> GetItemDetails(int pageSize = 20, int page = 1) => HandleResult(await Mediator.Send(new Application.WatchList.List.Query{ pageSize = pageSize, page = page }));
+        public async Task<IActionResult> GetItemDetails([FromQuery]PagingParams param) => HandleResult(await Mediator.Send(new Application.WatchList.List.Query{ Params = param }));
 
         [HttpPost]
         public async Task<IActionResult> CreateItemDetail(ItemDetails itemDetails) => HandleResult(await Mediator.Send(new Application.WatchList.Post.Command{ itemDetails = itemDetails }));
