@@ -15,14 +15,12 @@ namespace Application.ItemDetails
 {
     public class List
     {
-        public class Query : IRequest<Result<List<ItemDto>>>
+        public class Query : IRequest<Result<PagedList<ItemDto>>>
         {
-            public int pageSize  { get; set; }
-
-            public int page { get; set;}
+            public PagingParams Params { get; set; }
         }
 
-        public class Handler : IRequestHandler<Query, Result<List<ItemDto>>>
+        public class Handler : IRequestHandler<Query, Result<PagedList<ItemDto>>>
         {
             private readonly DataContext context;
             private readonly ILogger<Handler> logger;
@@ -35,32 +33,30 @@ namespace Application.ItemDetails
                 this.mapper = mapper;
             }
 
-            public async Task<Result<List<ItemDto>>> Handle(Query request, CancellationToken cancellationToken)
+            public async Task<Result<PagedList<ItemDto>>> Handle(Query request, CancellationToken cancellationToken)
             {
-                Dictionary<string, string[]> errors = PaginationValidator.Validate(request.pageSize, request.page);
+                Dictionary<string, string[]> errors = PaginationValidator.Validate(request.Params.PageSize, request.Params.PageNumber);
                 if(errors.Count != 0)
                 {
                     logger.LogInformation($"Request failed with the PaginationValidator");
-                    return Result<List<ItemDto>>.Failure(errors, StatusCodes.Status400BadRequest);
+                    return Result<PagedList<ItemDto>>.Failure(errors, StatusCodes.Status400BadRequest);
                 }
 
-                List<Domain.ItemDetails> results = await context.ItemDetails
+                var query = context.ItemDetails
                     .Include(item => item.UserWatchList)
                     .ThenInclude(u => u.AppUser)
                     .Include(item => item.UserWatchList)
                     .ThenInclude(u => u.MostRecentSnapshot)
-                    .ToListAsync();
+                    .AsQueryable();
 
-                if(results.Count > request.pageSize)
-                    results = results.GetRange((request.page - 1) * request.pageSize, request.pageSize);
-
-                var itemsToReturn = mapper.Map<List<ItemDto>>(results);
+                var results = await PagedList<Domain.ItemDetails>.CreateAsync(query, request.Params.PageNumber, request.Params.PageSize);
+                var itemsToReturn = mapper.Map<PagedList<ItemDto>>(results);
                 itemsToReturn.ForEach(async item => {
                     if(item.mostRecentSnapshot == null) 
                         item.mostRecentSnapshot = await GetMostRecentSnapshotByItemId(context, item.Id);
                 });
 
-                return Result<List<ItemDto>>.Success(itemsToReturn, StatusCodes.Status200OK);
+                return Result<PagedList<ItemDto>>.Success(itemsToReturn, StatusCodes.Status200OK);
             }
 
             private async Task<ItemPriceSnapshot> GetMostRecentSnapshotByItemId(DataContext context, long itemDetailsId)

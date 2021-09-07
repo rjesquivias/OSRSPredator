@@ -7,6 +7,10 @@ using Microsoft.EntityFrameworkCore;
 namespace Application.Core {
     public class PagedList<T> : List<T>
     {
+        public PagedList()
+        {
+        }
+
         public PagedList(IEnumerable<T> items, int count, int pageNumber, int pageSize)
         {
             CurrentPage = pageNumber;

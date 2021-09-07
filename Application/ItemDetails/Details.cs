@@ -2,7 +2,6 @@
 using Persistence;
 using System.Threading;
 using System.Threading.Tasks;
-using Domain;
 using Application.Core;
 using Microsoft.Extensions.Logging;
 using System.Collections.Generic;

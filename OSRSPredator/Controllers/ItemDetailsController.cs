@@ -1,6 +1,7 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using System.Threading.Tasks;
 using OSRSPredator.Controllers;
+using Application.Core;
 
 namespace API.Controllers
 {
@@ -9,7 +10,7 @@ namespace API.Controllers
     public class ItemDetailsController : BaseApiController
     {
         [HttpGet]
-        public async Task<IActionResult> GetItemDetails(int pageSize = 100, int page = 1) => HandleResult(await Mediator.Send(new Application.ItemDetails.List.Query{ pageSize = pageSize, page = page }));
+        public async Task<IActionResult> GetItemDetails([FromQuery]PagingParams param) => HandleResult(await Mediator.Send(new Application.ItemDetails.List.Query{ Params = param }));
 
         [HttpGet("{id}")]
         public async Task<IActionResult> GetItemDetail(long id) => HandleResult(await Mediator.Send(new Application.ItemDetails.Details.Query { Id = id }));
