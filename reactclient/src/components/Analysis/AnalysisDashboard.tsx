@@ -46,7 +46,7 @@ export default observer(function AnalysisDashboard() {
                 <Grid.Column width='3' floated='right'>
                 </Grid.Column>
                 <Grid.Column width='13' floated='right'>
-                    {itemStore.navState === itemStore.ALL_ITEMS && <PaginationCompact />}
+                    <PaginationCompact />
                 </Grid.Column>
             </Grid>
         </Container>

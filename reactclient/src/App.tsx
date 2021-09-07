@@ -5,7 +5,7 @@ import { Route, Switch, useLocation } from 'react-router-dom';
 import AnalysisDetails from "./components/Analysis/AnalysisDetails";
 import TestErrors from "./errors/TestError";
 import { toast, ToastContainer } from "react-toastify";
-import axios, { AxiosError } from "axios";
+import axios, { AxiosError, AxiosResponse } from "axios";
 import NotFound from "./errors/NotFound";
 import { history } from ".";
 import { store, useStore } from "./stores/store";
@@ -16,6 +16,7 @@ import { Container } from "semantic-ui-react";
 import { useEffect } from "react";
 import LoadingComponent from "./components/LoadingComponent";
 import ModalContainer from "./components/Modals/ModalContainer";
+import { PaginatedResult } from "./models/pagination";
 
 axios.interceptors.request.use(config => {
   const token = store.commonStore.token;
@@ -24,6 +25,11 @@ axios.interceptors.request.use(config => {
 })
 
 axios.interceptors.response.use(async response => {
+    const pagination = response.headers["pagination"];
+    if(pagination) {
+      response.data = new PaginatedResult(response.data, JSON.parse(pagination));
+      return response as AxiosResponse<PaginatedResult<any>>
+    }
     return response
 }, (error: AxiosError) => {
     const {data, status, config} = error.response!;

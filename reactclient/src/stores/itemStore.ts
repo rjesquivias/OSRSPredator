@@ -1,5 +1,6 @@
 import axios from "axios";
 import { makeAutoObservable } from "mobx";
+import { PaginatedResult } from "../models/pagination";
 
 export default class ItemStore {
     readonly ALL_ITEMS = "All Items";
@@ -20,7 +21,7 @@ export default class ItemStore {
     checkedItems: any[] = [];
     namePressed: boolean = false;
     page: number = 1;
-    totalPages = 3800/this.pageSize;
+    totalPages: number = 1;
     isListLoading: boolean = true;
     isDetailsLoading: boolean = true;
     selectedDetailsItem: any;
@@ -85,9 +86,10 @@ export default class ItemStore {
 
     loadAllItems = async (page: number | string | undefined) => {
         this.setIsListLoading(true);
-        var response = await axios.get(`${this.ITEM_DETAILS_URL}?${this.QUERY_PARAM_PAGESIZE}=${this.pageSize}&${this.QUERY_PARAM_PAGE}=${page}`);
+        var response = await axios.get<PaginatedResult<any>>(`${this.ITEM_DETAILS_URL}?${this.QUERY_PARAM_PAGESIZE}=${this.pageSize}&${this.QUERY_PARAM_PAGE}=${page}`);
+        this.totalPages = response.data.pagination.totalPages;
         console.log(response.data);
-        this.setSimpleItemAnalysisList(response.data);
+        this.setSimpleItemAnalysisList(response.data.data);
         this.setIsListLoading(false);
     }
 
@@ -99,9 +101,10 @@ export default class ItemStore {
 
     loadWatchList = async () => {
         this.setIsListLoading(true);
-        var response = await axios.get(`${this.ITEM_WATCHLIST_URL}?${this.QUERY_PARAM_PAGESIZE}=${this.pageSize}&${this.QUERY_PARAM_PAGE}=1`);
-        console.log(response.data);
-        this.setSimpleItemAnalysisList(response.data);
+        var response = await axios.get<PaginatedResult<any>>(`${this.ITEM_WATCHLIST_URL}?${this.QUERY_PARAM_PAGESIZE}=${this.pageSize}&${this.QUERY_PARAM_PAGE}=1`);
+        this.totalPages = response.data.pagination.totalPages;
+        console.log(response.data.data);
+        this.setSimpleItemAnalysisList(response.data.data);
         this.setIsListLoading(false);
     }
 
