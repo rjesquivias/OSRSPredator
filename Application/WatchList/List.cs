@@ -44,7 +44,12 @@ namespace Application.WatchList
                     return Result<PagedList<Domain.ItemDetails>>.Failure(errors, StatusCodes.Status400BadRequest);
                 }
 
-                var query = context.UserWatchList.Where(item => item.AppUserId == user.Id).Select(item => item.ItemDetails).AsQueryable();
+                var query = context.UserWatchList
+                    .OrderBy(item => item.ItemDetails.name)
+                    .Where(item => item.AppUserId == user.Id)
+                    .Select(item => item.ItemDetails)
+                    .AsQueryable();
+
                 var results = await PagedList<Domain.ItemDetails>.CreateAsync(query, request.Params.PageNumber, request.Params.PageSize);
 
                 return Result<PagedList<Domain.ItemDetails>>.Success(results, StatusCodes.Status200OK);

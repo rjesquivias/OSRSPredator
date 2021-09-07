@@ -9,8 +9,8 @@ export default class ItemStore {
     readonly ITEM_AVATAR_URL = "https://services.runescape.com/m=itemdb_oldschool/obj_big.gif?id=";
     readonly ITEM_DETAILS_URL = "https://localhost:5001/api/v1/ItemDetails";
     readonly ITEM_WATCHLIST_URL = "https://localhost:5001/api/v1/WatchList";
-    readonly QUERY_PARAM_PAGESIZE = "pageSize";
-    readonly QUERY_PARAM_PAGE = "page";
+    readonly QUERY_PARAM_PAGESIZE = "PageSize";
+    readonly QUERY_PARAM_PAGE = "PageNumber";
 
     simpleItemAnalysisList: any[] = [];
     simpleItemAnalysisMap: Map<number, any> = new Map();

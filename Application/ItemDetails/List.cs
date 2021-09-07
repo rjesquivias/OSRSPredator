@@ -10,6 +10,7 @@ using Microsoft.Extensions.Logging;
 using Microsoft.AspNetCore.Http;
 using AutoMapper;
 using System.Linq;
+using AutoMapper.QueryableExtensions;
 
 namespace Application.ItemDetails
 {
@@ -43,14 +44,11 @@ namespace Application.ItemDetails
                 }
 
                 var query = context.ItemDetails
-                    .Include(item => item.UserWatchList)
-                    .ThenInclude(u => u.AppUser)
-                    .Include(item => item.UserWatchList)
-                    .ThenInclude(u => u.MostRecentSnapshot)
+                    .OrderBy(item => item.name)
+                    .ProjectTo<ItemDto>(mapper.ConfigurationProvider)
                     .AsQueryable();
 
-                var results = await PagedList<Domain.ItemDetails>.CreateAsync(query, request.Params.PageNumber, request.Params.PageSize);
-                var itemsToReturn = mapper.Map<PagedList<ItemDto>>(results);
+                var itemsToReturn = await PagedList<ItemDto>.CreateAsync(query, request.Params.PageNumber, request.Params.PageSize);
                 itemsToReturn.ForEach(async item => {
                     if(item.mostRecentSnapshot == null) 
                         item.mostRecentSnapshot = await GetMostRecentSnapshotByItemId(context, item.Id);

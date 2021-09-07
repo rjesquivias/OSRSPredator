@@ -10,7 +10,7 @@ namespace API.Controllers
     public class ItemDetailsController : BaseApiController
     {
         [HttpGet]
-        public async Task<IActionResult> GetItemDetails([FromQuery]PagingParams param) => HandleResult(await Mediator.Send(new Application.ItemDetails.List.Query{ Params = param }));
+        public async Task<IActionResult> GetItemDetails([FromQuery]PagingParams param) => HandlePagedResult(await Mediator.Send(new Application.ItemDetails.List.Query{ Params = param }));
 
         [HttpGet("{id}")]
         public async Task<IActionResult> GetItemDetail(long id) => HandleResult(await Mediator.Send(new Application.ItemDetails.Details.Query { Id = id }));

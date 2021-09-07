@@ -11,7 +11,7 @@ namespace API.Controllers
     public class WatchListController : BaseApiController
     {
         [HttpGet]
-        public async Task<IActionResult> GetItemDetails([FromQuery]PagingParams param) => HandleResult(await Mediator.Send(new Application.WatchList.List.Query{ Params = param }));
+        public async Task<IActionResult> GetItemDetails([FromQuery]PagingParams param) => HandlePagedResult(await Mediator.Send(new Application.WatchList.List.Query{ Params = param }));
 
         [HttpPost]
         public async Task<IActionResult> CreateItemDetail(ItemDetails itemDetails) => HandleResult(await Mediator.Send(new Application.WatchList.Post.Command{ itemDetails = itemDetails }));
