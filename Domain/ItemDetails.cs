@@ -4,7 +4,7 @@ using System.ComponentModel.DataAnnotations.Schema;
 
 namespace Domain
 {
-public class ItemDetails
+    public class ItemDetails
     {
         [Required]
         [MaxLength(200)]

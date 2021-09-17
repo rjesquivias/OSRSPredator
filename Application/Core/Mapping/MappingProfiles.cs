@@ -10,6 +10,25 @@ namespace Application.Core.Mapping
     {
         public MappingProfiles()
         {
+            CreateMap<ItemHistoricalList, SnapshotDTO>()
+                .ForMember(d => d.Id, o => o.MapFrom(
+                    s => s.ItemPriceSnapshot.Id
+                ))
+                .ForMember(d => d.high, o => o.MapFrom(
+                    s => s.ItemPriceSnapshot.high
+                ))
+                .ForMember(d => d.highTime, o => o.MapFrom(
+                    s => s.ItemPriceSnapshot.highTime
+                ))
+                .ForMember(d => d.low, o => o.MapFrom(
+                    s => s.ItemPriceSnapshot.low
+                ))
+                .ForMember(d => d.lowTime, o => o.MapFrom(
+                    s => s.ItemPriceSnapshot.lowTime
+                ));
+
+            CreateMap<Domain.ItemDetails, ItemDetailsDTO>();
+
             CreateMap<ItemPriceSnapshot, SnapshotDTO>();
 
             CreateMap<Domain.ItemDetails, ItemDto>()
