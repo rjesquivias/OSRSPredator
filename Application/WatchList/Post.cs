@@ -1,3 +1,4 @@
+using System;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
@@ -61,12 +62,19 @@ namespace Application.WatchList
                 context.UserWatchList.Add(userWatchListItem);
                 context.ItemDetails.Attach(request.itemDetails);
 
-                var result = await context.SaveChangesAsync() > 0;
-                if(!result)
+                try
                 {
-                    logger.LogInformation($"WatchListItemDetails with the id of {request.itemDetails.Id} was not successfully added to the database");
-                    return Result<Unit>.Failure("Failed to write itemDetails", StatusCodes.Status500InternalServerError);
-                } 
+                    var result = await context.SaveChangesAsync() > 0;
+                    if(!result)
+                    {
+                        logger.LogInformation($"WatchListItemDetails with the id of {request.itemDetails.Id} was not successfully added to the database");
+                        return Result<Unit>.Failure("Failed to write itemDetails", StatusCodes.Status500InternalServerError);
+                    } 
+                }
+                catch(Exception e)
+                {
+                    throw e.InnerException;
+                }
 
                 return Result<Unit>.Success(Unit.Value, StatusCodes.Status200OK);
             }
@@ -75,17 +83,18 @@ namespace Application.WatchList
             {
                 var itemDetailsDBEntry = await context.ItemDetails.FindAsync(itemDetailsId);
                 context.Entry(itemDetailsDBEntry).State = EntityState.Detached;
-                var itemHistorical = await context.ItemDetails.Include(itemDetails => itemDetails.ItemHistoricalList).FirstOrDefaultAsync(x => x.Id == itemDetailsId);
-                if (itemHistorical != null && itemHistorical.ItemHistoricalList != null)
+                var itemDetails = await context.ItemDetails.Include(itemDetails => itemDetails.ItemHistoricalList).ThenInclude(itemHistorical => itemHistorical.ItemPriceSnapshot).FirstOrDefaultAsync(x => x.Id == itemDetailsId);
+                context.Entry(itemDetails).State = EntityState.Detached;
+                if (itemDetails != null && itemDetails.ItemHistoricalList != null)
                 {
-                    itemHistorical.ItemHistoricalList.ToList().Sort((ItemHistoricalList a, ItemHistoricalList b) =>
+                    itemDetails.ItemHistoricalList.ToList().Sort((ItemHistoricalList a, ItemHistoricalList b) =>
                     {
                         var A = a.ItemPriceSnapshot.highTime > a.ItemPriceSnapshot.lowTime ? a.ItemPriceSnapshot.highTime : a.ItemPriceSnapshot.lowTime;
                         var B = b.ItemPriceSnapshot.highTime > b.ItemPriceSnapshot.lowTime ? b.ItemPriceSnapshot.highTime : b.ItemPriceSnapshot.lowTime;
                         return A.CompareTo(B);
                     });
 
-                    return itemHistorical.ItemHistoricalList.First().ItemPriceSnapshot;
+                    return itemDetails.ItemHistoricalList.First().ItemPriceSnapshot;
                 }
                 return null;
             }
