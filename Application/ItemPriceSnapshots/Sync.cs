@@ -8,9 +8,7 @@ using Newtonsoft.Json;
 using Domain;
 using System.Collections.Generic;
 using Application.DTOs;
-using System.Linq;
 using System;
-using Microsoft.EntityFrameworkCore;
 using Application.Core;
 using Microsoft.AspNetCore.Http;
 
@@ -47,8 +45,7 @@ namespace Application.ItemPriceSnapshots
                         ItemPriceSnapshotDTO dto = JsonConvert.DeserializeObject<ItemPriceSnapshotDTO>(data);
                         foreach (KeyValuePair<string, PriceSnapshot> entry in dto.data)
                         {
-                            long historicalId = long.Parse(entry.Key);
-
+                            long itemId = long.Parse(entry.Key);
                             ItemPriceSnapshot newItemPriceSnapshot = new ItemPriceSnapshot
                             {
                                 Id = Guid.NewGuid().ToString(),
@@ -58,55 +55,20 @@ namespace Application.ItemPriceSnapshots
                                 lowTime = entry.Value.lowTime ?? 0,
                             };
 
-                            ItemHistorical itemHistorical = context.ItemHistoricals.Include(i => i.historical).FirstOrDefault(x => x.Id == historicalId);
-
-                            if(itemHistorical != null)
+                            try
                             {
-                                if (itemHistorical.historical == null)
+                                var itemDetails = await context.ItemDetails.FindAsync(itemId);
+                                context.ItemHistoricals.Add(new ItemHistoricalList
                                 {
-                                    itemHistorical.historical = new List<ItemPriceSnapshot>();
-                                }
-                                itemHistorical.historical.Add(newItemPriceSnapshot);
-                                try
-                                {
-                                    context.ItemHistoricals.Update(itemHistorical);
-                                    context.ItemPriceSnapshots.Add(newItemPriceSnapshot);
-                                }
-                                catch(Exception e)
-                                {
-                                    logger.LogError("Caught exception on id " + historicalId + " : " + e.ToString());
-                                }
+                                    ItemPriceSnapshot = newItemPriceSnapshot,
+                                    ItemDetails = itemDetails
+                                });
+                                context.SaveChanges();
                             }
-                            else
+                            catch(Exception e)
                             {
-                                itemHistorical = new ItemHistorical
-                                {
-                                    Id = historicalId,
-                                    historical = new List<ItemPriceSnapshot>
-                                    {
-                                        newItemPriceSnapshot
-                                    }
-                                };
-
-                                try
-                                {
-                                    context.ItemHistoricals.Add(itemHistorical);
-                                    context.ItemPriceSnapshots.Add(newItemPriceSnapshot);
-                                }
-                                catch (Exception e)
-                                {
-                                    logger.LogError("Caught exception on id " + historicalId + " : " + e.ToString());
-                                }
+                                logger.LogError("Caught exception on id " + itemId + " : " + e.ToString());
                             }
-                        }
-
-                        try
-                        {
-                            context.SaveChanges();
-                        }
-                        catch (Exception e)
-                        {
-                            logger.LogError("Caught exception: " + e.ToString());
                         }
                     }
                 }

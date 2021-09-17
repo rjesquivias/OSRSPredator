@@ -46,12 +46,13 @@ namespace Application.ItemDetails
 
                         foreach (var item in itemDetails) {
                             var itemDetailsDBEntry = await context.ItemDetails.FindAsync(item.Id);
-                            var itemHistorical = await context.ItemHistoricals.Include(itemHistoricals => itemHistoricals.historical).FirstOrDefaultAsync(x => x.Id == item.Id);
-                            if(itemHistorical != null && itemHistorical.historical != null)
+                            var itemHistorical = await context.ItemDetails.Include(itemDetails => itemDetails.ItemHistoricalList).FirstOrDefaultAsync(x => x.Id == item.Id);
+                            if (itemHistorical != null && itemHistorical.ItemHistoricalList != null)
                             {
-                                itemHistorical.historical.Sort((ItemPriceSnapshot a, ItemPriceSnapshot b) => {
-                                    var A = a.highTime > a.lowTime ? a.highTime : a.lowTime;
-                                    var B = b.highTime > b.lowTime ? b.highTime : b.lowTime;
+                                itemHistorical.ItemHistoricalList.ToList().Sort((ItemHistoricalList a, ItemHistoricalList b) =>
+                                {
+                                    var A = a.ItemPriceSnapshot.highTime > a.ItemPriceSnapshot.lowTime ? a.ItemPriceSnapshot.highTime : a.ItemPriceSnapshot.lowTime;
+                                    var B = b.ItemPriceSnapshot.highTime > b.ItemPriceSnapshot.lowTime ? b.ItemPriceSnapshot.highTime : b.ItemPriceSnapshot.lowTime;
                                     return A.CompareTo(B);
                                 });
 

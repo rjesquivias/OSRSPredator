@@ -4,7 +4,7 @@ using System.ComponentModel.DataAnnotations.Schema;
 
 namespace Domain
 {
-    public class ItemDetails
+public class ItemDetails
     {
         [Required]
         [MaxLength(200)]
@@ -39,5 +39,7 @@ namespace Domain
         public long prediction { get; set; }
 
         public ICollection<UserWatchList> UserWatchList { get; set; } = new List<UserWatchList>();
+
+        public ICollection<ItemHistoricalList> ItemHistoricalList { get; set; } = new List<ItemHistoricalList>();
     }
 }

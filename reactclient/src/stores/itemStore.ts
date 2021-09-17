@@ -101,7 +101,7 @@ export default class ItemStore {
 
     loadWatchList = async () => {
         this.setIsListLoading(true);
-        var response = await axios.get<PaginatedResult<any>>(`${this.ITEM_WATCHLIST_URL}?${this.QUERY_PARAM_PAGESIZE}=${this.pageSize}&${this.QUERY_PARAM_PAGE}=1`);
+        var response = await axios.get<PaginatedResult<any>>(`${this.ITEM_WATCHLIST_URL}?${this.QUERY_PARAM_PAGESIZE}=${this.pageSize}&${this.QUERY_PARAM_PAGE}=${this.page}`);
         this.totalPages = response.data.pagination.totalPages;
         console.log(response.data.data);
         this.setSimpleItemAnalysisList(response.data.data);

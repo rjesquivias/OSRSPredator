@@ -3,7 +3,7 @@ using Microsoft.EntityFrameworkCore.Migrations;
 
 namespace Persistence.Migrations
 {
-    public partial class IdentityAdded : Migration
+    public partial class InitialCleanup : Migration
     {
         protected override void Up(MigrationBuilder migrationBuilder)
         {
@@ -45,6 +45,41 @@ namespace Persistence.Migrations
                 constraints: table =>
                 {
                     table.PrimaryKey("PK_AspNetUsers", x => x.Id);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "ItemDetails",
+                columns: table => new
+                {
+                    Id = table.Column<long>(type: "INTEGER", nullable: false),
+                    examine = table.Column<string>(type: "TEXT", maxLength: 200, nullable: false),
+                    members = table.Column<bool>(type: "INTEGER", nullable: false),
+                    lowalch = table.Column<long>(type: "INTEGER", nullable: false),
+                    limit = table.Column<long>(type: "INTEGER", nullable: false),
+                    value = table.Column<long>(type: "INTEGER", nullable: false),
+                    highalch = table.Column<long>(type: "INTEGER", nullable: false),
+                    icon = table.Column<string>(type: "TEXT", maxLength: 50, nullable: false),
+                    name = table.Column<string>(type: "TEXT", maxLength: 50, nullable: false),
+                    prediction = table.Column<long>(type: "INTEGER", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_ItemDetails", x => x.Id);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "ItemPriceSnapshots",
+                columns: table => new
+                {
+                    Id = table.Column<string>(type: "TEXT", maxLength: 70, nullable: false),
+                    high = table.Column<long>(type: "INTEGER", nullable: false),
+                    highTime = table.Column<long>(type: "INTEGER", nullable: false),
+                    low = table.Column<long>(type: "INTEGER", nullable: false),
+                    lowTime = table.Column<long>(type: "INTEGER", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_ItemPriceSnapshots", x => x.Id);
                 });
 
             migrationBuilder.CreateTable(
@@ -153,6 +188,61 @@ namespace Persistence.Migrations
                         onDelete: ReferentialAction.Cascade);
                 });
 
+            migrationBuilder.CreateTable(
+                name: "ItemHistoricals",
+                columns: table => new
+                {
+                    ItemPriceSnapshotId = table.Column<string>(type: "TEXT", nullable: false),
+                    ItemDetailsId = table.Column<long>(type: "INTEGER", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_ItemHistoricals", x => new { x.ItemPriceSnapshotId, x.ItemDetailsId });
+                    table.ForeignKey(
+                        name: "FK_ItemHistoricals_ItemDetails_ItemDetailsId",
+                        column: x => x.ItemDetailsId,
+                        principalTable: "ItemDetails",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
+                    table.ForeignKey(
+                        name: "FK_ItemHistoricals_ItemPriceSnapshots_ItemPriceSnapshotId",
+                        column: x => x.ItemPriceSnapshotId,
+                        principalTable: "ItemPriceSnapshots",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "UserWatchList",
+                columns: table => new
+                {
+                    AppUserId = table.Column<string>(type: "TEXT", nullable: false),
+                    ItemDetailsId = table.Column<long>(type: "INTEGER", nullable: false),
+                    MostRecentSnapshotId = table.Column<string>(type: "TEXT", nullable: true)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_UserWatchList", x => new { x.AppUserId, x.ItemDetailsId });
+                    table.ForeignKey(
+                        name: "FK_UserWatchList_AspNetUsers_AppUserId",
+                        column: x => x.AppUserId,
+                        principalTable: "AspNetUsers",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
+                    table.ForeignKey(
+                        name: "FK_UserWatchList_ItemDetails_ItemDetailsId",
+                        column: x => x.ItemDetailsId,
+                        principalTable: "ItemDetails",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
+                    table.ForeignKey(
+                        name: "FK_UserWatchList_ItemPriceSnapshots_MostRecentSnapshotId",
+                        column: x => x.MostRecentSnapshotId,
+                        principalTable: "ItemPriceSnapshots",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Restrict);
+                });
+
             migrationBuilder.CreateIndex(
                 name: "IX_AspNetRoleClaims_RoleId",
                 table: "AspNetRoleClaims",
@@ -189,6 +279,21 @@ namespace Persistence.Migrations
                 table: "AspNetUsers",
                 column: "NormalizedUserName",
                 unique: true);
+
+            migrationBuilder.CreateIndex(
+                name: "IX_ItemHistoricals_ItemDetailsId",
+                table: "ItemHistoricals",
+                column: "ItemDetailsId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_UserWatchList_ItemDetailsId",
+                table: "UserWatchList",
+                column: "ItemDetailsId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_UserWatchList_MostRecentSnapshotId",
+                table: "UserWatchList",
+                column: "MostRecentSnapshotId");
         }
 
         protected override void Down(MigrationBuilder migrationBuilder)
@@ -209,10 +314,22 @@ namespace Persistence.Migrations
                 name: "AspNetUserTokens");
 
             migrationBuilder.DropTable(
+                name: "ItemHistoricals");
+
+            migrationBuilder.DropTable(
+                name: "UserWatchList");
+
+            migrationBuilder.DropTable(
                 name: "AspNetRoles");
 
             migrationBuilder.DropTable(
                 name: "AspNetUsers");
+
+            migrationBuilder.DropTable(
+                name: "ItemDetails");
+
+            migrationBuilder.DropTable(
+                name: "ItemPriceSnapshots");
         }
     }
 }

@@ -126,13 +126,17 @@ namespace Persistence.Migrations
                     b.ToTable("ItemDetails");
                 });
 
-            modelBuilder.Entity("Domain.ItemHistorical", b =>
+            modelBuilder.Entity("Domain.ItemHistoricalList", b =>
                 {
-                    b.Property<long>("Id")
-                        .ValueGeneratedOnAdd()
+                    b.Property<string>("ItemPriceSnapshotId")
+                        .HasColumnType("TEXT");
+
+                    b.Property<long>("ItemDetailsId")
                         .HasColumnType("INTEGER");
 
-                    b.HasKey("Id");
+                    b.HasKey("ItemPriceSnapshotId", "ItemDetailsId");
+
+                    b.HasIndex("ItemDetailsId");
 
                     b.ToTable("ItemHistoricals");
                 });
@@ -142,9 +146,6 @@ namespace Persistence.Migrations
                     b.Property<string>("Id")
                         .HasMaxLength(70)
                         .HasColumnType("TEXT");
-
-                    b.Property<long?>("ItemHistoricalId")
-                        .HasColumnType("INTEGER");
 
                     b.Property<long>("high")
                         .HasColumnType("INTEGER");
@@ -159,8 +160,6 @@ namespace Persistence.Migrations
                         .HasColumnType("INTEGER");
 
                     b.HasKey("Id");
-
-                    b.HasIndex("ItemHistoricalId");
 
                     b.ToTable("ItemPriceSnapshots");
                 });
@@ -313,11 +312,23 @@ namespace Persistence.Migrations
                     b.ToTable("AspNetUserTokens");
                 });
 
-            modelBuilder.Entity("Domain.ItemPriceSnapshot", b =>
+            modelBuilder.Entity("Domain.ItemHistoricalList", b =>
                 {
-                    b.HasOne("Domain.ItemHistorical", null)
-                        .WithMany("historical")
-                        .HasForeignKey("ItemHistoricalId");
+                    b.HasOne("Domain.ItemDetails", "ItemDetails")
+                        .WithMany("ItemHistoricalList")
+                        .HasForeignKey("ItemDetailsId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("Domain.ItemPriceSnapshot", "ItemPriceSnapshot")
+                        .WithMany("ItemHistoricalList")
+                        .HasForeignKey("ItemPriceSnapshotId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("ItemDetails");
+
+                    b.Navigation("ItemPriceSnapshot");
                 });
 
             modelBuilder.Entity("Domain.UserWatchList", b =>
@@ -403,12 +414,14 @@ namespace Persistence.Migrations
 
             modelBuilder.Entity("Domain.ItemDetails", b =>
                 {
+                    b.Navigation("ItemHistoricalList");
+
                     b.Navigation("UserWatchList");
                 });
 
-            modelBuilder.Entity("Domain.ItemHistorical", b =>
+            modelBuilder.Entity("Domain.ItemPriceSnapshot", b =>
                 {
-                    b.Navigation("historical");
+                    b.Navigation("ItemHistoricalList");
                 });
 #pragma warning restore 612, 618
         }

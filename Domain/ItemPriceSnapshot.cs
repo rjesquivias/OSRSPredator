@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 
 namespace Domain
@@ -15,5 +16,7 @@ namespace Domain
         public long low { get; set; }
 
         public long lowTime { get; set; }
+
+        public ICollection<ItemHistoricalList> ItemHistoricalList { get; set; } = new List<ItemHistoricalList>();
     }
 }

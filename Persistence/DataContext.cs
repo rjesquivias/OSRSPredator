@@ -12,7 +12,7 @@ namespace Persistence
 
         public DbSet<ItemDetails> ItemDetails { get; set; }
 
-        public DbSet<ItemHistorical> ItemHistoricals { get; set; }
+        public DbSet<ItemHistoricalList> ItemHistoricals { get; set; }
 
         public DbSet<ItemPriceSnapshot> ItemPriceSnapshots { get; set; }
 
@@ -32,6 +32,19 @@ namespace Persistence
             builder.Entity<UserWatchList>()
                 .HasOne(u => u.ItemDetails)
                 .WithMany(a => a.UserWatchList)
+                .HasForeignKey(aa => aa.ItemDetailsId);
+
+
+            builder.Entity<ItemHistoricalList>(x => x.HasKey(aa => new { aa.ItemPriceSnapshotId, aa.ItemDetailsId}));
+
+            builder.Entity<ItemHistoricalList>()
+                .HasOne(u => u.ItemPriceSnapshot)
+                .WithMany(a => a.ItemHistoricalList)
+                .HasForeignKey(aa => aa.ItemPriceSnapshotId);
+
+            builder.Entity<ItemHistoricalList>()
+                .HasOne(u => u.ItemDetails)
+                .WithMany(a => a.ItemHistoricalList)
                 .HasForeignKey(aa => aa.ItemDetailsId);
         }
     }
