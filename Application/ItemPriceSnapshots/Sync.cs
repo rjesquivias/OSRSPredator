@@ -11,6 +11,9 @@ using Application.DTOs;
 using System;
 using Application.Core;
 using Microsoft.AspNetCore.Http;
+using Application.Config;
+using Microsoft.Extensions.Options;
+using Microsoft.EntityFrameworkCore;
 
 namespace Application.ItemPriceSnapshots
 {
@@ -28,41 +31,61 @@ namespace Application.ItemPriceSnapshots
 
             private readonly IMediator mediator;
 
-            public Handler(DataContext context, ILogger<Handler> logger, IMediator mediator)
+            private readonly RsWikiConfig rsWikiConfig;
+
+            public Handler(DataContext context, ILogger<Handler> logger, IMediator mediator, IOptionsMonitor<RsWikiConfig> rsWikiConfig)
             {
                 this.context = context;
                 this.logger = logger;
                 this.mediator = mediator;
+                this.rsWikiConfig = rsWikiConfig.CurrentValue;
             }
 
             public async Task<Result<Unit>> Handle(Command request, CancellationToken cancellationToken)
             {
                 using (var httpClient = new HttpClient())
                 {
-                    using (var response = await httpClient.GetAsync("https://prices.runescape.wiki/api/v1/osrs/latest"))
+                    using (var response = await httpClient.GetAsync(rsWikiConfig.ItemPriceSnapshotsUrl))
                     {
                         string data = await response.Content.ReadAsStringAsync();
                         ItemPriceSnapshotDTO dto = JsonConvert.DeserializeObject<ItemPriceSnapshotDTO>(data);
                         foreach (KeyValuePair<string, PriceSnapshot> entry in dto.data)
                         {
                             long itemId = long.Parse(entry.Key);
-                            ItemPriceSnapshot newItemPriceSnapshot = new ItemPriceSnapshot
-                            {
-                                Id = Guid.NewGuid().ToString(),
-                                high = entry.Value.high ?? 0,
-                                highTime = entry.Value.highTime ?? 0,
-                                low = entry.Value.low ?? 0,
-                                lowTime = entry.Value.lowTime ?? 0,
-                            };
-
                             try
                             {
-                                var itemDetails = await context.ItemDetails.FindAsync(itemId);
-                                context.ItemHistoricals.Add(new ItemHistoricalList
+                                // Create the new Snapshot from the DTO we read from the endpoint
+                                ItemPriceSnapshot newItemPriceSnapshot = new ItemPriceSnapshot
+                                {
+                                    Id = Guid.NewGuid().ToString(),
+                                    high = entry.Value.high ?? 0,
+                                    highTime = entry.Value.highTime ?? 0,
+                                    low = entry.Value.low ?? 0,
+                                    lowTime = entry.Value.lowTime ?? 0,
+                                };
+                            
+                                // Find the ItemDetails associated with this specific items snapshot
+                                var itemDetails = await context.ItemDetails.Include(itemDetails => itemDetails.ItemHistoricalList).FirstOrDefaultAsync(item => item.Id == itemId);
+
+                                // Using the ItemDetails & ItemPriceSnapshot, construct the many to many
+                                // ItemHistoricalList object
+                                var itemHistoricalItem = new ItemHistoricalList
                                 {
                                     ItemPriceSnapshot = newItemPriceSnapshot,
                                     ItemDetails = itemDetails
-                                });
+                                };
+                                
+                                // Create the associated links
+                                if(itemDetails.ItemHistoricalList == null)
+                                    itemDetails.ItemHistoricalList = new List<ItemHistoricalList>();
+                                itemDetails.ItemHistoricalList.Add(itemHistoricalItem);
+
+                                if(newItemPriceSnapshot.ItemHistoricalList == null)
+                                    newItemPriceSnapshot.ItemHistoricalList = new List<ItemHistoricalList>();
+                                newItemPriceSnapshot.ItemHistoricalList.Add(itemHistoricalItem);
+
+                                context.ItemHistoricals.Add(itemHistoricalItem);
+
                                 context.SaveChanges();
                             }
                             catch(Exception e)

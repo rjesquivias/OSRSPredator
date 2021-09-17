@@ -11,6 +11,7 @@ using Microsoft.AspNetCore.Http;
 using AutoMapper;
 using System.Linq;
 using AutoMapper.QueryableExtensions;
+using Application.DTOs;
 
 namespace Application.ItemDetails
 {
@@ -57,21 +58,29 @@ namespace Application.ItemDetails
                 return Result<PagedList<ItemDto>>.Success(itemsToReturn, StatusCodes.Status200OK);
             }
 
-            private async Task<ItemPriceSnapshot> GetMostRecentSnapshotByItemId(DataContext context, long itemDetailsId)
+            private async Task<SnapshotDTO> GetMostRecentSnapshotByItemId(DataContext context, long itemDetailsId)
             {
                 var itemDetailsDBEntry = await context.ItemDetails.FindAsync(itemDetailsId);
                 context.Entry(itemDetailsDBEntry).State = EntityState.Detached;
-                var itemHistorical = await context.ItemDetails.Include(itemDetails => itemDetails.ItemHistoricalList).FirstOrDefaultAsync(x => x.Id == itemDetailsId);
-                if (itemHistorical != null && itemHistorical.ItemHistoricalList != null)
+                var itemDetails = context.ItemDetails.Include(itemDetails => itemDetails.ItemHistoricalList).ThenInclude(itemHistorical => itemHistorical.ItemPriceSnapshot).FirstOrDefault(item => item.Id == itemDetailsId);
+                if (itemDetails != null && itemDetails.ItemHistoricalList != null)
                 {
-                    itemHistorical.ItemHistoricalList.ToList().Sort((ItemHistoricalList a, ItemHistoricalList b) =>
+                    itemDetails.ItemHistoricalList.ToList().Sort((ItemHistoricalList a, ItemHistoricalList b) =>
                     {
                         var A = a.ItemPriceSnapshot.highTime > a.ItemPriceSnapshot.lowTime ? a.ItemPriceSnapshot.highTime : a.ItemPriceSnapshot.lowTime;
                         var B = b.ItemPriceSnapshot.highTime > b.ItemPriceSnapshot.lowTime ? b.ItemPriceSnapshot.highTime : b.ItemPriceSnapshot.lowTime;
                         return A.CompareTo(B);
                     });
 
-                    return itemHistorical.ItemHistoricalList.First().ItemPriceSnapshot;
+                    var snapshot = itemDetails.ItemHistoricalList.First().ItemPriceSnapshot;
+                    return new SnapshotDTO
+                    {
+                        Id = snapshot.Id,
+                        high = snapshot.high,
+                        highTime = snapshot.highTime,
+                        low = snapshot.low,
+                        lowTime = snapshot.lowTime
+                    };
                 }
 
                 return null;

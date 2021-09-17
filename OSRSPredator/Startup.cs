@@ -23,6 +23,7 @@ using Application.Interfaces;
 using Infrastructure.Security;
 using AutoMapper;
 using Application.Core.Mapping;
+using Application.Config;
 
 namespace OSRSPredator
 {
@@ -40,7 +41,6 @@ namespace OSRSPredator
         // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services)
         {
-
             services.AddControllers(opt => {
                     var policy = new AuthorizationPolicyBuilder().RequireAuthenticatedUser().Build();
                     opt.Filters.Add(new AuthorizeFilter(policy));
@@ -77,14 +77,12 @@ namespace OSRSPredator
             {
                 opt.UseSqlite(Configuration.GetConnectionString("DefaultConnection"));
             });
-
             services.AddMediatR(typeof(Application.ItemDetails.List.Handler).Assembly);
             services.AddCors(opt => {
                 opt.AddPolicy("CorsPolicy", policy => {
                     policy.AllowAnyMethod().AllowAnyHeader().WithOrigins("http://localhost:3000");
                 });
             });
-
             services.AddIdentityCore<AppUser>(options => {
                 options.Password.RequiredLength = 8;
                 options.Password.RequireNonAlphanumeric = false;
@@ -116,6 +114,7 @@ namespace OSRSPredator
 
             var mapper = config.CreateMapper();
             services.AddSingleton(mapper);
+            services.Configure<RsWikiConfig>(Configuration.GetSection("RsWikiConfig"));
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.

@@ -11,6 +11,5 @@ namespace Application.Core {
             get { return pageSize; }
             set { pageSize = (value > MaxPageSize) ? MaxPageSize : value; }
         }
-        
     }
 }

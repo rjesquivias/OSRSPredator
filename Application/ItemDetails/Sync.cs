@@ -6,11 +6,10 @@ using System.Net.Http;
 using Microsoft.Extensions.Logging;
 using Newtonsoft.Json;
 using System.Collections.Generic;
-using Microsoft.EntityFrameworkCore;
-using Domain;
-using System.Linq;
 using Application.Core;
 using Microsoft.AspNetCore.Http;
+using Application.Config;
+using Microsoft.Extensions.Options;
 
 namespace Application.ItemDetails
 {
@@ -28,36 +27,32 @@ namespace Application.ItemDetails
 
             private readonly IMediator mediator;
 
-            public Handler(DataContext context, ILogger<Handler> logger, IMediator mediator)
+            private readonly RsWikiConfig rsWikiConfig;
+
+            public Handler(DataContext context, ILogger<Handler> logger, IMediator mediator, IOptionsMonitor<RsWikiConfig> rsWikiConfig)
             {
                 this.context = context;
                 this.logger = logger;
                 this.mediator = mediator;
+                this.rsWikiConfig = rsWikiConfig.CurrentValue;
             }
 
             public async Task<Result<Unit>> Handle(Command request, CancellationToken cancellationToken)
             {
                 using (var httpClient = new HttpClient())
                 {
-                    using (var response = await httpClient.GetAsync("https://prices.runescape.wiki/api/v1/osrs/mapping"))
+                    using (var response = await httpClient.GetAsync(rsWikiConfig.ItemDetailsUrl))
                     {
                         string data = await response.Content.ReadAsStringAsync();
                         List<Domain.ItemDetails> itemDetails = JsonConvert.DeserializeObject<List<Domain.ItemDetails>>(data);
 
                         foreach (var item in itemDetails) {
                             var itemDetailsDBEntry = await context.ItemDetails.FindAsync(item.Id);
-                            var itemHistorical = await context.ItemDetails.Include(itemDetails => itemDetails.ItemHistoricalList).FirstOrDefaultAsync(x => x.Id == item.Id);
-                            if (itemHistorical != null && itemHistorical.ItemHistoricalList != null)
+                            if(itemDetailsDBEntry == null)
                             {
-                                itemHistorical.ItemHistoricalList.ToList().Sort((ItemHistoricalList a, ItemHistoricalList b) =>
-                                {
-                                    var A = a.ItemPriceSnapshot.highTime > a.ItemPriceSnapshot.lowTime ? a.ItemPriceSnapshot.highTime : a.ItemPriceSnapshot.lowTime;
-                                    var B = b.ItemPriceSnapshot.highTime > b.ItemPriceSnapshot.lowTime ? b.ItemPriceSnapshot.highTime : b.ItemPriceSnapshot.lowTime;
-                                    return A.CompareTo(B);
-                                });
-
-                                context.SaveChanges();
+                                await context.ItemDetails.AddAsync(item);
                             }
+                            context.SaveChanges();
                         }
                     }
                 }

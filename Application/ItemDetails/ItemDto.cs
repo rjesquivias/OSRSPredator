@@ -1,4 +1,4 @@
-using Domain;
+using Application.DTOs;
 
 namespace Application.ItemDetails
 {
@@ -24,6 +24,6 @@ namespace Application.ItemDetails
 
         public long prediction { get; set; }
 
-        public ItemPriceSnapshot mostRecentSnapshot { get; set; }
+        public SnapshotDTO mostRecentSnapshot { get; set; }
     }
 }
