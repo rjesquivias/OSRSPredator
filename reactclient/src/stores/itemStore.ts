@@ -1,6 +1,7 @@
 import axios from "axios";
 import { makeAutoObservable } from "mobx";
 import { PaginatedResult } from "../models/pagination";
+import { Snapshot } from "../models/snapshot";
 
 export default class ItemStore {
     readonly ALL_ITEMS = "All Items";
@@ -13,6 +14,7 @@ export default class ItemStore {
     readonly QUERY_PARAM_PAGESIZE = "PageSize";
     readonly QUERY_PARAM_PAGE = "PageNumber";
 
+    snapshotList: Snapshot[] = [];
     simpleItemAnalysisList: any[] = [];
     simpleItemAnalysisMap: Map<number, any> = new Map();
     simpleItemAnalysisImageLoadedMap: Map<number, boolean> = new Map();
